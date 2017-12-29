@@ -35,17 +35,17 @@ CDB队列。当有多组数据同时试图广播时，将它们存储在队列�
 // TODO： YB
 ### Register File
 #### overview
-寄存器文件。对每个寄存器，保存`value[31:0]`, `label[4:0]`, `Watching`  
-value:寄存器的内容  
+寄存器文件。
+data:寄存器的内容  
 label:当label不为0时，标志等待的数据所在的位置；否则表示数据在寄存器中，可直接被读取。  
 #### IO ports
 ``` verilog
 module RegisterFile(
-    input read1[4:0],
-    input read2[4:0],
+    input readAddr1[4:0],
+    input readAddr2[4:0],
     output dataOut1[31:0],
     output label1[4:0],
-    output dataOut[31:0],
+    output dataOut2[31:0],
     output label2[4:0]
     );
 ```
@@ -61,13 +61,13 @@ module ReservationStation(
     input WEN, // Write ENable
     input opCode[4:0],
     input func[4:0],
-    input value1[31:0],
+    input dataIn1[31:0],
     input label1[4:0],
-    input value2[31:0],
+    input dataIn2[31:0],
     input label2[4:0],
     input BCEN, // BroadCast ENable
     input BClabel[4:0], // BoradCast label
-    input BCvalue[31:0], //BroadCast value
+    input BCdata[31:0], //BroadCast value
     output dataOut1[31:0],
     output dataOut2[31:0],
     output OEN, // output ENable
@@ -81,6 +81,11 @@ Store缓冲器。`sw`指令被发射后，直接进入该缓冲器。该缓冲�
 ``` verilog
 module StoreBuffer(
     input clk,
-    input [31:0]A, // value stored in buffer
+    input label[4:0],
+    input base_addr[31:0], // from register 
+    input offset_addr[31:0], // from immd
+    input [31:0] data,
+    input BCEN,
+    input BCdata[31:0]
 );
 ```
