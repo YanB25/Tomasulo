@@ -28,6 +28,11 @@ wire CDB[31:0];
 wire CDBLabel[4:0];
 wire BCEN; // BroadCast ENable
 ```
+### CDB Queue
+#### overview
+CDB队列。当有多组数据同时试图广播时，将它们存储在队列中依次广播。
+#### IO Ports
+// TODO： YB
 ### Register File
 #### overview
 寄存器文件。对每个寄存器，保存`value[31:0]`, `label[4:0]`, `Watching`  
@@ -67,4 +72,15 @@ module ReservationStation(
     output dataOut2[31:0],
     output OEN, // output ENable
     );
+```
+### Store Buffer
+#### overview
+Store缓冲器。`sw`指令被发射后，直接进入该缓冲器。该缓冲器中的操作数要么已经准备完成(label == 0), 要么等待CDB广播（label != 0)。
+#### IO Port
+// TODO!
+``` verilog
+module StoreBuffer(
+    input clk,
+    input [31:0]A, // value stored in buffer
+);
 ```
