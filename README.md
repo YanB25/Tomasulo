@@ -30,9 +30,19 @@ wire BCEN; // BroadCast ENable
 ```
 ### CDB Queue
 #### overview
-CDB队列。当有多组数据同时试图广播时，将它们存储在队列中依次广播。
+CDB队列。接受四分频的时钟信号。  
+每个时钟信号下降沿到达后，检查来自四个不同源的`enable`信号是否为1，若是，则往队列中写入新的一项。  
+每个**CPU时钟信号**的时钟上升沿到达后，进行一次广播，将队列首出队。
 #### IO Ports
-// TODO： YB
+``` verilog
+module CDBQueue(
+    input clk_div4,
+    input [31:0] dataIn,
+    input [4:0] labelIn,
+    output [31:0] dataOut,
+    output [4:0] labelOut,
+);
+```
 ### Register File
 #### overview
 寄存器文件。
@@ -68,24 +78,59 @@ module ReservationStation(
     input BCEN, // BroadCast ENable
     input BClabel[4:0], // BoradCast label
     input BCdata[31:0], //BroadCast value
+    input EXEable, // whether the ALU is available and ins can be issued
     output dataOut1[31:0],
     output dataOut2[31:0],
-    output OEN, // output ENable
+    output isFull // whether the buffer is full
     );
 ```
 ### Store Buffer
 #### overview
-Store缓冲器。`sw`指令被发射后，直接进入该缓冲器。该缓冲器中的操作数要么已经准备完成(label == 0), 要么等待CDB广播（label != 0)。
+Store缓冲器。该缓冲器的容量为4，**采用4分频的时钟信号**。  
+`sw`指令被发射后，直接进入该缓冲器。该缓冲器中的操作数要么已经准备完成(label == 0), 要么等待CDB广播（label != 0)。  
+对`base_addr`未准备好的指令，需要一直等CDB广播。  
+对`base_addr`准备好但`effective_addr`未准备好的指令，下一个CPU上升沿到达后，将来自ALU的有效地址写入。  
+对所有操作数都准备好的指令，直接将有效地址送往`RAM`。在下一个时钟上升沿到达后，将该指令移缓冲器。
+#### summary
+在时钟上升沿到达后，要做的事有  
+1. 检查i+1条指令。（将i = i + 1 mod 4）
+1. 若有效地址存在，将其输出到ram，将该项的busy位置位0.
+1. 若该位busy为0，读取input数据并存入。
+1. 若有效地址不存在，将计算所需数据输出到ALU
+
+在时钟下降沿要做的事
+1. 检查第i位指令
+1. 若需要的数据来自ALU，则将来自ALU的数据写入。
 #### IO Port
-// TODO!
 ``` verilog
 module StoreBuffer(
-    input clk,
-    input label[4:0],
-    input base_addr[31:0], // from register 
-    input offset_addr[31:0], // from immd
+    input clk_div4,
+    input [4:0] label,
+    input [31:0] base_addr, // from register 
+    input [31:0]offset_addr, // from immd
+    input [31:0]effective_address, // from ALU
     input [31:0] data,
     input BCEN,
-    input BCdata[31:0]
+    input [31:0]BCdata,
+    input [4:0]BClabel,
+    output [31:0]addrOut， // output effective address
+    output [31:0] dataOut
 );
+    reg [31:0] effective_address[0:3];
+    reg busy[0:3];
 ```
+### load buffer
+#### overview
+每个时钟上升沿到达后，接受来自指令队列的`lw`指令。同`store buffer`。  
+
+### ALU for store / load effective address
+#### overview
+计算store和load缓冲区中的有效地址的专用ALU。  
+只执行加法。每个操作仅需一个CPU周期的时间。
+#### IO Ports
+``` verilog
+module ALU_SL(
+    input [31:0] data1,
+    input [31:0] data2,
+    output [31:0] out
+);
