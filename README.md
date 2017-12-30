@@ -124,29 +124,31 @@ module ReservationStation(
 ```
 ### multi-cycle ALU
 #### overview
-多周期ALU。加法1个CPU周期，减法两个。 
-ALU内存有状态转换寄存器。分别具有状态`idle`, `plus`, `minus1`, `minus2`  
-在idle状态，ALU随时准备好在时钟上升沿接受dataIn
-在`plus`和`minus2`状态（即每个操作的最后一个状态），ALU必须等到CDB返回`Accept`才能继续接受下一次的dataIn。  
-若CDB返回AC，时钟上升沿到达后：
-1. 若保留站请求使用ALU，则根据op将状态转换为`plus`或`minus2`.
-1. 若保留站不请求，则状态转为`idle`。
-
+多周期ALU。时序电路，带状态转换。
+接受来自保留站的`inEN`信号，标志是否有新数据请求运算。  
+接受来自CDB的`resultAC`信号，标志运算结果是否被广播，若未被广播，需要阻塞直到被广播为止。  
+输出`finished`信号到CDB。请求CDB广播。
 #### IO Ports
 //TODO :: split it into state module and alu module
 ``` verilog
+module state(
+    input clk,
+    input nRST,
+    output [1:0] stateOut;
+    input inEN, // input ENable from reservation
+    input resultAC, //whether result is ACcepted by CDB
+    output finished // send to CDB
+    );
 module pmALU ( // plus/minus ALU
     input clk,
-    input inEN, // input ENable
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input pmALUop,
     input resultAC,
-    output finished, // send to CDB
     output [31:0] result
 );
 ```
-### Store Buffer
+### Store Buffer(TODO)
 #### overview
 Store缓冲器。该缓冲器的容量为4，**采用4分频的时钟信号**。  
 #### summary
