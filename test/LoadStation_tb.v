@@ -4,7 +4,7 @@
     1. 每一个上升沿一定会写（默认每次都会有新的指令）除非满
 
 */
-module ReservationStation_tb();
+module LoadStation_tb();
     reg clk;
     reg EXEable; // whether the ALU is available and ins can be issued
     reg WEN; // Write ENable
@@ -15,7 +15,7 @@ module ReservationStation_tb();
     reg [4:0] label1;
     reg [31:0] dataIn2;
     reg [4:0] label2;
-
+    reg [31:0] Imm;
     reg BCEN; // BroadCast ENable
     reg [4:0] BClabel; // BoradCast label
     reg [31:0] BCdata; //BroadCast value
@@ -34,6 +34,7 @@ module ReservationStation_tb();
         dataIn2 = 4;
         label1 = 2;
         label2 = 0;
+        Imm = 100;
         #40
         // EXEable = 1;
         opCode = 2;
@@ -41,6 +42,7 @@ module ReservationStation_tb();
         dataIn2 = 2;
         label1 = 0;
         label2 = 0;
+        Imm = 1;
         #40
         BCEN = 1;
         BClabel = 2;
@@ -67,16 +69,17 @@ module ReservationStation_tb();
         clk = ~clk;
     end
 
-    ReservationStation test(
+    LoadStation test(
         .clk(clk),
         .EXEable(EXEable),
         .WEN(WEN),
         .opCode(opCode),
         .func(func),
         .dataIn1(dataIn1),
-        .dataIn2(dataIn2),
+        // .dataIn2(dataIn2),
         .label1(label1),
-        .label2(label2),
+        // .label2(label2),
+        .Imm(Imm),
         .BCEN(BCEN),
         .BClabel(BClabel),
         .BCdata(BCdata),

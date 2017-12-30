@@ -3,6 +3,7 @@
 
 module ReservationStation(
     input clk,
+    input nRST,
     input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
 
@@ -45,56 +46,63 @@ module ReservationStation(
     end
     
     always@(posedge clk) begin
-        if (EXEable == 1 && ready_addr != 2'b11) begin
-            Busy[ready_addr] <= 0;
+        if (nRST == 0) begin 
+            Busy[0] <= 0;
+            Busy[1] <= 0;
+            Busy[2] <= 0;
         end
-        if (cur_addr != 2'b11 && Busy[cur_addr] == 0) begin
-            Busy[cur_addr] <= 1;
-            Op[cur_addr] <= opCode;
-            if (BCEN == 1 & label1 == BClabel) begin
-                Qj[cur_addr] <= 0;
-                Vj[cur_addr] <= BCdata;
+        else begin 
+            if (EXEable == 1 && ready_addr != 2'b11) begin
+                Busy[ready_addr] <= 0;
             end
-            else begin
-                Qj[cur_addr] <= label1;
-                Vj[cur_addr] <= dataIn1;
+            if (cur_addr != 2'b11 && Busy[cur_addr] == 0) begin
+                Busy[cur_addr] <= 1;
+                Op[cur_addr] <= opCode;
+                if (BCEN == 1 & label1 == BClabel) begin
+                    Qj[cur_addr] <= 0;
+                    Vj[cur_addr] <= BCdata;
+                end
+                else begin
+                    Qj[cur_addr] <= label1;
+                    Vj[cur_addr] <= dataIn1;
+                end
+                if (BCEN == 1 && label2 == BClabel) begin
+                    Qk[cur_addr] <= 0;
+                    Vk[cur_addr] <= BCdata;
+                end
+                else begin
+                    Qk[cur_addr] <= label2;
+                    Vk[cur_addr] <= dataIn2;
+                end
             end
-            if (BCEN == 1 && label2 == BClabel) begin
-                Qk[cur_addr] <= 0;
-                Vk[cur_addr] <= BCdata;
-            end
-            else begin
-                Qk[cur_addr] <= label2;
-                Vk[cur_addr] <= dataIn2;
-            end
-        end
-        //  maybe generate latch
-    
-        // 从CDB总线中写
-        if (BCEN == 1 ) begin 
-            if (Busy[0] == 1 && Qj[0] == BClabel) begin
-                Vj[0] = BCdata;
-                Qj[0] = 0;
-            end
-            if (Busy[1] == 1 && Qj[1] == BClabel) begin
-                Vj[1] = BCdata;
-                Qj[1] = 0;
-            end
-            if (Busy[2] == 1 && Qj[2] == BClabel) begin
-                Vj[2] = BCdata;
-                Qj[2] = 0;
-            end
-            if (Busy[0] == 1 && Qk[0] == BClabel) begin
-                Vk[0] = BCdata;
-                Qk[0] = 0;
-            end
-            if (Busy[1] == 1 && Qk[1] == BClabel) begin
-                Vk[1] = BCdata;
-                Qk[1] = 0;
-            end
-            if (Busy[2] == 1 && Qk[2] == BClabel) begin
-                Vk[2] = BCdata;
-                Qk[2] = 0;
+            //  maybe generate latch
+        
+            // 从CDB总线中写
+            if (BCEN == 1 ) begin 
+                if (Busy[0] == 1 && Qj[0] == BClabel) begin
+                    Vj[0] = BCdata;
+                    Qj[0] = 0;
+                end
+                if (Busy[1] == 1 && Qj[1] == BClabel) begin
+                    Vj[1] = BCdata;
+                    Qj[1] = 0;
+                end
+                if (Busy[2] == 1 && Qj[2] == BClabel) begin
+                    Vj[2] = BCdata;
+                    Qj[2] = 0;
+                end
+                if (Busy[0] == 1 && Qk[0] == BClabel) begin
+                    Vk[0] = BCdata;
+                    Qk[0] = 0;
+                end
+                if (Busy[1] == 1 && Qk[1] == BClabel) begin
+                    Vk[1] = BCdata;
+                    Qk[1] = 0;
+                end
+                if (Busy[2] == 1 && Qk[2] == BClabel) begin
+                    Vk[2] = BCdata;
+                    Qk[2] = 0;
+                end
             end
         end
     end    
