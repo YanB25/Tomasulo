@@ -63,3 +63,5 @@
 `define sFPMatchExp 2'b01
 `define sFPSumUp 2'b10
 `define sFPNorm 2'b11
+
+`define sWorking 1'b1

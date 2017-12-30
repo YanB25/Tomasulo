@@ -7,10 +7,12 @@ module mfState(
     input inEN,
     input resultAC,
     output available,
-    output mdfALUEN // determine whether mdfALU should work
+    output mdfALUEN, // determine whether mdfALU should work
+    output requireCDB
 );
-    assign available = ((stateOut == `sMulAnswer) && resultAC) || stateOut == `sIdle;
+    assign available = (requireCDB && resultAC) || stateOut == `sIdle;
     assign mdfALUEN = available && inEN;
+    assign requireCDB = stateOut == `sMulAnswer;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
