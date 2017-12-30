@@ -6,74 +6,104 @@ module ReservationStation(
     input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
 
-    input opCode[4:0],
-    input func[4:0],
-    input dataIn1[31:0],
-    input label1[4:0],
-    input dataIn2[31:0],
-    input label2[4:0],
+    input [4:0] opCode,
+    input [4:0] func,
+    input [31:0] dataIn1,
+    input [4:0] label1,
+    input [31:0] dataIn2,
+    input [4:0] label2,
 
     input BCEN, // BroadCast ENable
-    input BClabel[4:0], // BoradCast label
-    input BCdata[31:0], //BroadCast value
+    input [4:0] BClabel, // BoradCast label
+    input [31:0] BCdata, //BroadCast value
 
-    output reg opOut[4:0];
-    output reg dataOut1[31:0],
-    output reg dataOut2[31:0],
+    output reg [4:0] opOut,
+    output reg [31:0] dataOut1,
+    output reg [31:0] dataOut2,
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
     output [4:0]labelOut
     );
 
     // 设置了三个保留站
-    // 若使用2'11来索引，无效
-    reg [2:0]Busy;
-    reg [2:0]Op[4:0];
-    reg [2:0]Qj[4:0];
-    reg [2:0]Vj[31:0];
-    reg [2:0]Qk[4:0];
-    reg [2:0]Qj[4:0];
+    // 若使b2'11来索引，无效
+    reg Busy[2:0];
+    reg [4:0]Op[2:0];
+    reg [4:0]Qj[2:0];
+    reg [31:0]Vj[2:0];
+    reg [4:0]Qk[2:0];
+    reg [31:0]Vk[2:0];
 
-    // 当前可写地址 ,若2'b11则为不可写
-    reg cur_addr [1:0];
-    // 当前就绪地址,若2'b11则为不可写
-    reg ready_addr [1:0];
-    integer i,j,k;
-
+    // 当前可写地址 ,2'b11则为不可写?
+    reg [1:0] cur_addr ;
+    // 当前就绪地址,2'b11则为不可写?
+    reg [1:0] ready_addr ;
+    initial begin
+        Busy[0] = 0;
+        Busy[1] = 0;
+        Busy[2] = 0;
+    end
+    
     always@(posedge clk) begin
+        if (EXEable == 1 && ready_addr != 2'b11) begin
+            Busy[ready_addr] <= 0;
+        end
         if (cur_addr != 2'b11 && Busy[cur_addr] == 0) begin
             Busy[cur_addr] <= 1;
             Op[cur_addr] <= opCode;
-            Qj[cur_addr] <= label1;
-            Vj[cur_addr] <= dataIn1;
-            Qk[cur_addr] <= label2;
-            Vk[cur_addr] <= dataIn2;
+            if (BCEN == 1 & label1 == BClabel) begin
+                Qj[cur_addr] <= 0;
+                Vj[cur_addr] <= BCdata;
+            end
+            else begin
+                Qj[cur_addr] <= label1;
+                Vj[cur_addr] <= dataIn1;
+            end
+            if (BCEN == 1 && label2 == BClabel) begin
+                Qk[cur_addr] <= 0;
+                Vk[cur_addr] <= BCdata;
+            end
+            else begin
+                Qk[cur_addr] <= label2;
+                Vk[cur_addr] <= dataIn2;
+            end
         end
         //  maybe generate latch
     
-        // 从CDB总线中写回
-        if (BCEN == 1 && WEN = 1) begin 
-            for (i = 0; i < 2; i = i+1) begin
-                if (Busy[i] == 1 && Qj[i] == BClabel) begin
-                    Vj[i] = BCdata;
-                    Qj[i] = 0;
-                end
+        // 从CDB总线中写
+        if (BCEN == 1 ) begin 
+            if (Busy[0] == 1 && Qj[0] == BClabel) begin
+                Vj[0] = BCdata;
+                Qj[0] = 0;
             end
-            for (j = 0; j < 2; j = j+1) begin
-                if (Busy[j] == 1 && Qk[j] = BClabel) begin
-                    Vk[j] = BCdata;
-                    Qk[j] = 0;
-                end
+            if (Busy[1] == 1 && Qj[1] == BClabel) begin
+                Vj[1] = BCdata;
+                Qj[1] = 0;
+            end
+            if (Busy[2] == 1 && Qj[2] == BClabel) begin
+                Vj[2] = BCdata;
+                Qj[2] = 0;
+            end
+            if (Busy[0] == 1 && Qk[0] == BClabel) begin
+                Vk[0] = BCdata;
+                Qk[0] = 0;
+            end
+            if (Busy[1] == 1 && Qk[1] == BClabel) begin
+                Vk[1] = BCdata;
+                Qk[1] = 0;
+            end
+            if (Busy[2] == 1 && Qk[2] == BClabel) begin
+                Vk[2] = BCdata;
+                Qk[2] = 0;
             end
         end
     end    
     
-    always@(negedge clk) begin
+    always@(*) begin
         if (EXEable == 1 && ready_addr != 2'b11) begin
-            opOut <= Op[ready_addr];
-            dataOut1 <= Vj[ready_addr];
-            dataOut2 <= Vk[ready_addr];
-            Busy[read_addr] <= 0;
+            opOut = Op[ready_addr];
+            dataOut1 = Vj[ready_addr];
+            dataOut2 = Vk[ready_addr];
         end
         // maybe generate latch
     end
@@ -98,24 +128,28 @@ module ReservationStation(
     assign isFull = & cur_addr;
 
     // 是否就绪
-    // 计算当前就绪地址，以及就绪状态
+    // 计算当前就绪地址，以及就绪状态?
     always@(*)begin
         if (Busy[0] == 1 && Qj[0] == 0 && Qk[0] == 0) begin
             ready_addr = 2'b00;
         end
-        else if(Busy[1] == 1 && Qj[1]] == 0 && Qk[1] == 0) begin
-            ready_addr = 2'b01;
+        else begin
+            if(Busy[1] == 1 && Qj[1] == 0 && Qk[1] == 0) begin
+                ready_addr = 2'b01;
+            end
+            else begin 
+                if (Busy[2] == 1 && Qj[2] == 0 && Qk[2] == 0 ) begin
+                    ready_addr = 2'b10;
+                end
+                else 
+                    ready_addr = 2'b11;
+            end
         end
-        else if (Busy[2] == 1 && Qj[2] == 0 && Qk[2] == 0 ) begin]
-            ready_addr = 2'b10;
-        end
-        else 
-            ready_addr = 2'b11;
     end
 
-    assign OutEn = & ready_addr;
+    assign OutEn = ~ (&ready_addr);
 
-    // 保留站号，暂时前缀为00，可能会改
-    assign labelOut = {0,0,ready_addr};
+    // 保留站号?
+    assign labelOut = {0,0,0,ready_addr};
 
 endmodule
