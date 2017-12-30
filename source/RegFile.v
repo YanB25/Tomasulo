@@ -25,17 +25,16 @@ module RegFile(
     generate
         genvar i;
         for (i = 1; i < 32; i = i + 1) begin: regfile
-            always @(negedge clk or negedge nRST) begin
+            always @(posedge clk or negedge nRST) begin
                 if (!nRST) begin
                     regFile[i] <= 32'b0;
-                    regLabel[i] <= 5'b0;
                 end else begin
-                    if (BCEN && regLabel[i] == BClabel) begin
+                    if (RegWr && WriteAddr == i) begin
+                        regLabel[i] <= WriteLabel; // don't care whether WriteLabel is the same as BClabel. 
+                            // Anyway, it is overriden by WriteLabel at last.
+                    end else if (BCEN && regLabel[i] == BClabel) begin
                         regLabel[i] <= 5'b0;
                         regData[i] <= BCdata;
-                    end
-                    if (RegWr && WriteAddr == i) begin
-                        regLabel[i] <= WriteLabel;
                     end
                 end
             end
