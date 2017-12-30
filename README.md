@@ -1,11 +1,16 @@
 # Tomasulo
+## Description
 An out-of-order execution algorithm for pipeline CPU.  
 Project for `computer organization principles course`
-
-[toc]
-## overview
+## Installation
+``` bash
+$ git clone git@github.com:YanB25/Tomasulo.git
+```
+## Usage
+Manually add all the files in `scource/` into `vivado` and just run.
+## Overview
 ![](/doc/pic/overview.png)
-## terminology
+## Terminology
 1. 块
 存储信息的单位。若干有关联的数据放在一起称为块。例如op和func和rs,rd,rt等存储在一起，称为一个块。
 1. 标志位
@@ -33,9 +38,20 @@ CDB.所有刚执行完得到的数据的广播都要通过该总线完成。
 每个执行器件（如各个ALU）,向CDB Helper发送`require`信号请求广播。  
 CDB保证其广播信号在一个周期内不发生更改。
 ``` verilog
-wire CDB[31:0];
-wire CDBLabel[4:0];
-wire BCEN; // BroadCast ENable
+module CDB(
+    input [31:0] data0,
+    input [4:0] label0,
+    input [31:0] data1,
+    input [4:0] label1,
+    input [31:0] data2,
+    input [4:0] label2,
+    input [31:0] data3,
+    input [4:0] label3,
+    input [3:0] sel,
+    output [31:0] dataOut,
+    output [4:0] labelOut,
+    output EN
+);
 ```
 ### CDB Queue
 canceled.
@@ -46,37 +62,19 @@ canceled.
 一个优先译码器。组合逻辑。  
 当各个器件向CDB发送传播请求时（传送1），只有一个器件能得到接受回应（1），其余器件都得到拒绝回应（0）。  
 回应将持续一个周期。回应保证在一个周期内不发生改变。  
-回应保证只在时钟上升沿
 #### IO Ports
 ``` verilog
 module CDBHelper(
-    input xxx_require,
-    input [31:0]xxx_data,
-    input yyy_require,
-    input [31:0] yyy_data,
-    ... // many requires
-    
-    // determin which component's require is accepted. 
-    // Send to CU, and CU send "1" or "0" to all coms.
-    output [3:0]accept_id,
+    input [3:0] requires,
+    output reg [3:0] accepts
 );
 ```
 ### Register File
-#### overview
-寄存器文件。
-data:寄存器的内容  
-label:当label不为0时，标志等待的数据所在的位置；否则表示数据在寄存器中，可直接被读取。  
-#### IO ports
-``` verilog
-module RegisterFile(
-    input readAddr1[4:0],
-    input readAddr2[4:0],
-    output dataOut1[31:0],
-    output label1[4:0],
-    output dataOut2[31:0],
-    output label2[4:0]
-    );
-```
+寄存器文件。时序电路。  
+当时钟下降沿到达后：
+检查CDB的广播，若该广播的数据被监听，则将数据更新入寄存器文件中。  
+检查当前指令的`rd`,记录`rd`所等待的label。  
+[Details here](/doc/RegisterFile.md)
 ### Reservation Station 
 #### overview
 保留站。包括加减ALU保留站和乘除FPU的保留站。  
