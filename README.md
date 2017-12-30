@@ -33,9 +33,20 @@ CDB.所有刚执行完得到的数据的广播都要通过该总线完成。
 每个执行器件（如各个ALU）,向CDB Helper发送`require`信号请求广播。  
 CDB保证其广播信号在一个周期内不发生更改。
 ``` verilog
-wire CDB[31:0];
-wire CDBLabel[4:0];
-wire BCEN; // BroadCast ENable
+module CDB(
+    input [31:0] data0,
+    input [4:0] label0,
+    input [31:0] data1,
+    input [4:0] label1,
+    input [31:0] data2,
+    input [4:0] label2,
+    input [31:0] data3,
+    input [4:0] label3,
+    input [3:0] sel,
+    output [31:0] dataOut,
+    output [4:0] labelOut,
+    output EN
+);
 ```
 ### CDB Queue
 canceled.
@@ -50,15 +61,8 @@ canceled.
 #### IO Ports
 ``` verilog
 module CDBHelper(
-    input xxx_require,
-    input [31:0]xxx_data,
-    input yyy_require,
-    input [31:0] yyy_data,
-    ... // many requires
-    
-    // determin which component's require is accepted. 
-    // Send to CU, and CU send "1" or "0" to all coms.
-    output [3:0]accept_id,
+    input [3:0] requires,
+    output reg [3:0] accepts
 );
 ```
 ### Register File
