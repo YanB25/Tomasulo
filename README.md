@@ -29,8 +29,9 @@ module Queue(
 ```
 ### Commom Data Bus
 #### overview
-CDB.所有刚执行完得到的数据的广播都要通过该总线完成。为了避免冲突，还应实现一个队列用于缓存广播数据。  
-#### Codes
+CDB.所有刚执行完得到的数据的广播都要通过该总线完成。  
+每个执行器件（如各个ALU）,向CDB Helper发送`require`信号请求广播。  
+CDB保证其广播信号在一个周期内不发生更改。
 ``` verilog
 wire CDB[31:0];
 wire CDBLabel[4:0];
@@ -42,12 +43,13 @@ canceled.
 见CDB Helper  
 ### CDB Helper
 #### overview
-一个优先译码器。  
-当各个器件向CDB发送传播请求时（传送1），只有一个器件能得到回应（1），其余器件都得到拒绝回应（0）。回应将持续一个周期。未得到回应的器件应持续向CDB发送请求，否则数据不会被广播。
+一个优先译码器。组合逻辑。  
+当各个器件向CDB发送传播请求时（传送1），只有一个器件能得到接受回应（1），其余器件都得到拒绝回应（0）。  
+回应将持续一个周期。回应保证在一个周期内不发生改变。  
+回应保证只在时钟上升沿
 #### IO Ports
 ``` verilog
 module CDBHelper(
-    input clk,
     input xxx_require,
     input [31:0]xxx_data,
     input yyy_require,
@@ -122,16 +124,14 @@ module ReservationStation(
     reg answer_item[3:0]; // which line answer to the ins from queue
     reg sendALU_item[3:0]; // which line send data to ALU
 ```
-### multi-cycle ALU
+### multi-cycle ALU for plus and minus
 #### overview
 多周期ALU。时序电路，带状态转换。
 接受来自保留站的`inEN`信号，标志是否有新数据请求运算。  
 接受来自CDB的`resultAC`信号，标志运算结果是否被广播，若未被广播，需要阻塞直到被广播为止。  
 输出`finished`信号到CDB。请求CDB广播。
 #### IO Ports
-//TODO :: split it into state module and alu module
 ``` verilog
-
 module state(
     input clk,
     input nRST,
@@ -150,6 +150,12 @@ module pmALU ( // plus/minus ALU
     output [31:0] result
 );
 ```
+### ALU for multiple and division
+#### overview
+与多周期加减ALU一致，只是实现方式和状态转换不同
+### FLU
+#### overview
+浮点运算ALU。与多周期加减/乘除ALU一致，只是实现方式和状态转换不同。
 ### Store Buffer(TODO)
 #### overview
 Store缓冲器。该缓冲器的容量为4，**采用4分频的时钟信号**。  
