@@ -94,8 +94,8 @@ module mdfALU(
             temp2[1] <= 32'b0;
             result <= 32'b0;
         end else begin
-            temp2[0] <= temp4[0] + temp4[1];
-            temp2[1] <= temp4[2] + temp4[3];
+            temp2[0] <= temp4[0] + temp4[2];
+            temp2[1] <= temp4[1] + temp4[3];
             result <= temp2[0] + temp2[1];
         end
     end
