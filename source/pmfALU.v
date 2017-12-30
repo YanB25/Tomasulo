@@ -7,9 +7,12 @@ module State(
     input inEN,
     input resultAC,
     output available,
+    output pmfALUEN, // send to pmfALU as EN
     input op
 );
-    assign available = (stateOut == `ALUAdd || stateOut == `sMAdd) && resultAC;
+    assign available = ((stateOut == `ALUAdd || stateOut == `sMAdd) && resultAC)
+        || stateOut == `sIdle;
+    assign pmfAlUEN = available & inEN;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
@@ -33,10 +36,10 @@ module State(
     end
 endmodule
 
-module pmALU(
+module pmfALU(
     input clk,
     input nRST,
-    input EN,
+    input EN, // linked from State::pmfALUEN
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [1:0] state,
@@ -45,20 +48,17 @@ module pmALU(
     reg [31:0] data1_latch;
     reg [31:0] data2_latch;
     reg [31:0] inverseData2_latch;
-    reg op;
     always(posedge clk or negedge nRST) begin
         if (!nRST) begin
             data1_latch <= 32b'0;
             data2_latch <= 32b'0;
             inverseData2_latch <= 31b'0;
-            op <= 0;
         end else begin
             case (state)
                 `sIdle, `sAdd, `sMAdd :
                     if (EN) begin
                         data1_latch <= dataIn1;
                         data2_latch <= dataIn2;
-                        op <= pmALUop;
                     end
                 `sInverse :
                     inverseData2_latch <= ~data2_latch;
