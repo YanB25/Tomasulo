@@ -6,13 +6,13 @@ module State(
     output reg [1:0] stateOut,
     input inEN,
     input resultAC,
-    output reg finished,
+    output available,
     input op
 );
+    assign available = (stateOut == `ALUAdd || stateOut == `sMAdd) && resultAC;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
-            finished <= 0;
         end else begin
             case (stateOut)
                 `sIdle : 

@@ -16,10 +16,10 @@ module mdfState(
             case(stateOut)
                 `sMulAnswer:
                     if (resultAC) begin
-                        stateOut <= isEN ? `sMul32 : `Idle;
+                        stateOut <= inEN ? `sMul32 : `sIdle;
                     end
                 `sIdle:
-                    if (isEn)
+                    if (inEN)
                         stateOut <= `sMul32;
                 default:
                     stateOut <= stateOut + 1;
@@ -42,7 +42,6 @@ module mdfALU(
     reg [31:0]temp8[0:7];
     reg [31:0]temp4[0:3];
     reg [31:0]temp2[0:1];
-    reg [31:0]result;
 
     generate
         genvar i;  
@@ -51,7 +50,7 @@ module mdfALU(
                 if (!nRST) begin
                     temp32[i] <= 32'b0;
                 end else if (EN) begin
-                    temp32[i] <= dataIn2[i] == 0 ? 0 : dataIn1[i] << i;
+                    temp32[i] <= dataIn2[i] == 0 ? 0 : dataIn1 << i;
                 end
             end
         end

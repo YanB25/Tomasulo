@@ -1,4 +1,4 @@
-`include "head.v"
+`include "../source/head.v"
 `timescale 1ns/1ps
 module mdfALU_tb;
     reg clk = 0;
@@ -6,6 +6,7 @@ module mdfALU_tb;
     reg inEN = 1;
     reg resultAC = 1;
     wire [31:0]result;
+    wire [2:0] stateOut;
     initial begin
         #1;
         nRST = 0;
@@ -30,7 +31,7 @@ module mdfALU_tb;
     mdfALU alu(
         .clk(clk),
         .nRST(nRST),
-        .En(inEN),
+        .EN(inEN),
         .dataIn1(dataIn1),
         .dataIn2(dataIn2),
         .state(stateOut),
