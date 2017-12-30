@@ -81,52 +81,51 @@ module RegisterFile(
     output label2[4:0]
     );
 ```
-### Reservation Station (TODO)
+### Reservation Station 
 #### overview
 保留站。包括加减ALU保留站和乘除FPU的保留站。  
 每个CPU周期，一条算逻运算指令将发射到对应ALU保留站处。  
 该指令要么所有的操作数都已准备好（立即可以被执行，label==0），或部分操作数由`label`（label != 0）代替，正等待`CDB`的广播。 
 #### summary
 清零信号到达后：
-//TODO
-四分频时钟上升沿到达后：
-1. 将索引i加一
-1. 若这是第一个阶段的时钟上升沿，（即索引从3变为0)，则将内部的标志寄存器组清空。
 
-四分频时钟下降沿到达后，
-1. 若有来自指令队列的指令且还没被响应(!answer)
-    1. 若该行空闲，且指令的操作数都准备好了
-    do something
-    1. 若该行空闲，且指令的操作数未准备好
-    do something
-1. 若该行忙，且未能发射，且CDB送来所需要的数据
-1. 若该行忙，且能够发射，且ALU空闲，且没有其他`行`想发射
-发射指令
-busy_item[i]置为0 
+设置了三个保留站
+1. 当时钟上升沿到达的时候，
+    1. 由信号isFull反映是否可写及写成功，将对应的值写进保留站中
+    （不提供控制写地址的端口，只向外界告知是否写成功）
+    2. 从CDB中读取信息，若CDB可用，则上升沿写入对应保留站中的寄存器，并修改相应Qi/Qj
+2. 时钟下降沿到达时，若保留站中存在操作数就绪的指令，则对外输出就绪指令数据及保留站号
+    1. 输入信号EXEable若反映ALU不可用， 则对应Busy位不修改，否则将已输出的指令对应的Busy清零
+    2. 输出信号OutEn为0反映输出不可用（指令处于未就绪状态），反之则就绪，ALU可写
+
+
 #### IO Ports
+> 前提：用于索引label的地址的位数为5
+
 ``` verilog
 module ReservationStation(
-    input clk_div4,
+    input clk,
+    input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
+
     input opCode[4:0],
     input func[4:0],
     input dataIn1[31:0],
     input label1[4:0],
     input dataIn2[31:0],
     input label2[4:0],
+
     input BCEN, // BroadCast ENable
     input BClabel[4:0], // BoradCast label
     input BCdata[31:0], //BroadCast value
-    input EXEable, // whether the ALU is available and ins can be issued
-    output dataOut1[31:0],
-    output dataOut2[31:0],
+
+    output reg opOut[4:0];
+    output reg dataOut1[31:0],
+    output reg dataOut2[31:0],
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
     output [4:0]labelOut
     );
-    reg busy_item[3:0]; // which line is busy
-    reg answer_item[3:0]; // which line answer to the ins from queue
-    reg sendALU_item[3:0]; // which line send data to ALU
 ```
 ### multi-cycle ALU for plus and minus
 #### overview
