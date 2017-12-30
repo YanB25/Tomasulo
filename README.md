@@ -1,11 +1,16 @@
 # Tomasulo
+## Description
 An out-of-order execution algorithm for pipeline CPU.  
 Project for `computer organization principles course`
-
-[toc]
-## overview
+## Installation
+``` bash
+$ git clone git@github.com:YanB25/Tomasulo.git
+```
+## Usage
+Manually add all the files in `scource/` into `vivado` and just run.
+## Overview
 ![](/doc/pic/overview.png)
-## terminology
+## Terminology
 1. 块
 存储信息的单位。若干有关联的数据放在一起称为块。例如op和func和rs,rd,rt等存储在一起，称为一个块。
 1. 标志位
@@ -67,18 +72,28 @@ module CDBHelper(
 ```
 ### Register File
 #### overview
-寄存器文件。
-data:寄存器的内容  
-label:当label不为0时，标志等待的数据所在的位置；否则表示数据在寄存器中，可直接被读取。  
+寄存器文件。时序电路。  
+当时钟下降沿到达后：
+检查CDB的广播，若该广播的数据被监听，则将数据更新入寄存器文件中。  
+检查当前指令的`rd`,记录`rd`所等待的label。  
+
 #### IO ports
 ``` verilog
 module RegisterFile(
-    input readAddr1[4:0],
-    input readAddr2[4:0],
-    output dataOut1[31:0],
-    output label1[4:0],
-    output dataOut2[31:0],
-    output label2[4:0]
+    input clk,
+    input nRST,
+    input [4:0] ReadAddr1,
+    input [4:0] ReadAddr2,
+    input RegWr,
+    input [4:0] WriteAddr,
+    input [31:0] WriteLabel,
+    output [31:0] DataOut1,
+    output [31:0] DataOut2,
+    output [4:0] LabelOut1,
+    output [4:0] LabelOut2,
+    input BCEN,
+    input [4:0] BClabel,
+    input [31:0] BCdata
     );
 ```
 ### Reservation Station 
