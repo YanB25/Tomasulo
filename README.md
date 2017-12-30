@@ -74,7 +74,7 @@ module CDBHelper(
 当时钟下降沿到达后：
 检查CDB的广播，若该广播的数据被监听，则将数据更新入寄存器文件中。  
 检查当前指令的`rd`,记录`rd`所等待的label。  
-[Details here](\doc\RegisterFile.md)
+[Details here](/doc/RegisterFile.md)
 ### Reservation Station 
 #### overview
 保留站。包括加减ALU保留站和乘除FPU的保留站。  
