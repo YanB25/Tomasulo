@@ -9,7 +9,7 @@ $ git clone git@github.com:YanB25/Tomasulo.git
 ## Usage
 Manually add all the files in `scource/` into `vivado` and just run.
 ## Overview
-![](/doc/pic/overview.png)
+<img src="/doc/pic/overview.png" style="height:20em"/>
 ## Terminology
 1. 块
 存储信息的单位。若干有关联的数据放在一起称为块。例如op和func和rs,rd,rt等存储在一起，称为一个块。
