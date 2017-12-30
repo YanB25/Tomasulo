@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 `include "head.v"
-module State(
+module mdfState(
     input clk,
     input nRST,
     output reg [2:0] stateOut,
@@ -31,7 +31,7 @@ endmodule
 module mdfALU(
     input clk,
     input nRST,
-    input En,
+    input EN,
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [2:0] state,
@@ -50,7 +50,7 @@ module mdfALU(
             always@(posedge clk or negedge nRST) begin
                 if (!nRST) begin
                     temp32[i] <= 32'b0;
-                end else begin
+                end else if (EN) begin
                     temp32[i] <= dataIn2[i] == 0 ? 0 : dataIn1[i] << i;
                 end
             end

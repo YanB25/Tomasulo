@@ -36,7 +36,7 @@ endmodule
 module pmALU(
     input clk,
     input nRST,
-    input En,
+    input EN,
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [1:0] state,
