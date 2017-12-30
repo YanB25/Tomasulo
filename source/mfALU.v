@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 `include "head.v"
-module mdfState(
+module mfState(
     input clk,
     input nRST,
     output reg [2:0] stateOut, // to ALU
@@ -30,7 +30,7 @@ module mdfState(
     end
 endmodule
 
-module mdfALU(
+module mfALU(
     input clk,
     input nRST,
     input EN, // linked from state::mdfALUEN
