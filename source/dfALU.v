@@ -1,3 +1,4 @@
+//TODO NOT FINISHED
 `timescale 1ns/1ps
 `include "head.v"
 module dfState(
@@ -8,10 +9,13 @@ module dfState(
     input inEN,
     input resultAC,
     output available,
-    output dfALUEN // determine whether mdfALU should work
+    output dfALUEN, // determine whether mdfALU should work
+    output requireCDB,
+    output keepLooping // send to dfALU
 );
-    assign available = ((stateOut == `sWorking) && cnt[5]) || stateOut == `sIdle;
+    assign available = (requireCDB && resultAC) || stateOut == `sIdle;
     assign mdfALUEN = available && inEN;
+    assign requireCDB = stateOut == `sWorking && cnt[5];
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
@@ -22,9 +26,11 @@ module dfState(
                     if (inEN)
                         stateOut <= `sWorking;
                 `sWorking:
-                    if (cnt[5] && resultAC && !inEN) begin
-                        stateOut <= `sIdle;
-                        cnt <= 0;
+                    if (cnt[5]) begin
+                        if (resultAC) begin
+                            stateOut <= inEN ? `sWorking : `sIdle;
+                            cnt <= 0;
+                        end
                     end else begin
                         cnt <= cnt + 1;
                     end
