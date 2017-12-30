@@ -3,11 +3,14 @@
 module mdfState(
     input clk,
     input nRST,
-    output reg [2:0] stateOut,
+    output reg [2:0] stateOut, // to ALU
     input inEN,
     input resultAC,
-    output reg finished
+    output available,
+    output mdfALUEN // determine whether mdfALU should work
 );
+    assign available = ((stateOut == `sMulAnswer) && resultAC) || stateOut == `sIdle;
+    assign mdfALUEN = available && inEN;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
@@ -31,7 +34,7 @@ endmodule
 module mdfALU(
     input clk,
     input nRST,
-    input EN,
+    input EN, // linked from state::mdfALUEN
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [2:0] state,
