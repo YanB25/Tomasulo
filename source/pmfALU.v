@@ -30,7 +30,7 @@ module State(
                         end
                     end
                 end
-                `Inverse:
+                `sInverse:
                     stateOut <= `sMAdd;
             endcase
         end
@@ -49,11 +49,11 @@ module pmfALU(
     reg [31:0] data1_latch;
     reg [31:0] data2_latch;
     reg [31:0] inverseData2_latch;
-    always(posedge clk or negedge nRST) begin
+    always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
-            data1_latch <= 32b'0;
-            data2_latch <= 32b'0;
-            inverseData2_latch <= 31b'0;
+            data1_latch <= 32'b0;
+            data2_latch <= 32'b0;
+            inverseData2_latch <= 31'b0;
         end else begin
             case (state)
                 `sIdle, `sAdd, `sMAdd :

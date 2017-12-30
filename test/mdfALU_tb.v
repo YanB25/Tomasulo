@@ -3,7 +3,7 @@
 module mdfALU_tb;
     reg clk = 0;
     reg nRST = 1;
-    reg inEN = 1;
+    wire inEN;
     reg resultAC = 1;
     wire [31:0]result;
     wire [2:0] stateOut;
@@ -20,15 +20,17 @@ module mdfALU_tb;
     reg [31:0]dataIn1 = 5;
     reg [31:0]dataIn2 = 10;
 
-    mdfState state(
+    mfState state(
         .clk(clk),
         .nRST(nRST),
         .stateOut(stateOut),
         .inEN(inEN),
         .resultAC(resultAC),
-        .finished(finishend)
+        .available(available),
+        .mdfALUEN(inEN),
+        .requireCDB(r)
     );
-    mdfALU alu(
+    mfALU alu(
         .clk(clk),
         .nRST(nRST),
         .EN(inEN),
