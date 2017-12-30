@@ -62,7 +62,6 @@ canceled.
 一个优先译码器。组合逻辑。  
 当各个器件向CDB发送传播请求时（传送1），只有一个器件能得到接受回应（1），其余器件都得到拒绝回应（0）。  
 回应将持续一个周期。回应保证在一个周期内不发生改变。  
-回应保证只在时钟上升沿
 #### IO Ports
 ``` verilog
 module CDBHelper(
@@ -71,31 +70,11 @@ module CDBHelper(
 );
 ```
 ### Register File
-#### overview
 寄存器文件。时序电路。  
 当时钟下降沿到达后：
 检查CDB的广播，若该广播的数据被监听，则将数据更新入寄存器文件中。  
 检查当前指令的`rd`,记录`rd`所等待的label。  
-
-#### IO ports
-``` verilog
-module RegisterFile(
-    input clk,
-    input nRST,
-    input [4:0] ReadAddr1,
-    input [4:0] ReadAddr2,
-    input RegWr,
-    input [4:0] WriteAddr,
-    input [31:0] WriteLabel,
-    output [31:0] DataOut1,
-    output [31:0] DataOut2,
-    output [4:0] LabelOut1,
-    output [4:0] LabelOut2,
-    input BCEN,
-    input [4:0] BClabel,
-    input [31:0] BCdata
-    );
-```
+[Details here](\doc\RegisterFile.md)
 ### Reservation Station 
 #### overview
 保留站。包括加减ALU保留站和乘除FPU的保留站。  
