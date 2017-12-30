@@ -48,7 +48,14 @@
 `define funcJR 6'b000001
 
 // ALU state
-`define sIdle 2'b00
+`define sIdle 0
 `define sAdd 2'b01
 `define sInverse 2'b10 // for Inverse
 `define sMAdd 2'b11 // for Minus Add
+
+`define sMul32 3'b001
+`define sMul16 3'b010 
+`define sMul8 3'b011
+`define sMul4 3'b100
+`define sMul2 3'b101
+`define sMulAnswer 3'b110

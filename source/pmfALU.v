@@ -6,13 +6,13 @@ module State(
     output reg [1:0] stateOut,
     input inEN,
     input resultAC,
-    output reg finished,
+    output available,
     input op
 );
+    assign available = (stateOut == `ALUAdd || stateOut == `sMAdd) && resultAC;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
-            finished <= 0;
         end else begin
             case (stateOut)
                 `sIdle : 
@@ -36,7 +36,7 @@ endmodule
 module pmALU(
     input clk,
     input nRST,
-    input En,
+    input EN,
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [1:0] state,
