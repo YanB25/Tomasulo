@@ -59,3 +59,7 @@
 `define sMul4 3'b100
 `define sMul2 3'b101
 `define sMulAnswer 3'b110
+
+`define sFPMatchExp 2'b01
+`define sFPSumUp 2'b10
+`define sFPNorm 2'b11

@@ -14,7 +14,6 @@ module mdfState(
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
-            finished <= 0;
         end else begin
             case(stateOut)
                 `sMulAnswer:
