@@ -7,7 +7,7 @@ module RegFile(
     input [4:0] ReadAddr2,
     input RegWr,
     input [4:0] WriteAddr,
-    input [31:0] WriteLabel,
+    input [4:0] WriteLabel,
     output [31:0] DataOut1,
     output [31:0] DataOut2,
     output [4:0] LabelOut1,
@@ -27,7 +27,8 @@ module RegFile(
         for (i = 1; i < 32; i = i + 1) begin: regfile
             always @(posedge clk or negedge nRST) begin
                 if (!nRST) begin
-                    regFile[i] <= 32'b0;
+                    regData[i] <= 32'b0;
+                    regLabel[i] <= 32'b0;
                 end else begin
                     if (RegWr && WriteAddr == i) begin
                         regLabel[i] <= WriteLabel; // don't care whether WriteLabel is the same as BClabel. 
