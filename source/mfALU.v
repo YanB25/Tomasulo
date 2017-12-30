@@ -1,16 +1,18 @@
 `timescale 1ns/1ps
 `include "head.v"
-module mdfState(
+module mfState(
     input clk,
     input nRST,
     output reg [2:0] stateOut, // to ALU
     input inEN,
     input resultAC,
     output available,
-    output mdfALUEN // determine whether mdfALU should work
+    output mdfALUEN, // determine whether mdfALU should work
+    output requireCDB
 );
-    assign available = ((stateOut == `sMulAnswer) && resultAC) || stateOut == `sIdle;
+    assign available = (requireCDB && resultAC) || stateOut == `sIdle;
     assign mdfALUEN = available && inEN;
+    assign requireCDB = stateOut == `sMulAnswer;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
@@ -30,7 +32,7 @@ module mdfState(
     end
 endmodule
 
-module mdfALU(
+module mfALU(
     input clk,
     input nRST,
     input EN, // linked from state::mdfALUEN

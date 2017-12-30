@@ -8,11 +8,12 @@ module State(
     input resultAC,
     output available,
     output pmfALUEN, // send to pmfALU as EN
-    input op
+    input op,
+    output requireCDB
 );
-    assign available = ((stateOut == `ALUAdd || stateOut == `sMAdd) && resultAC)
-        || stateOut == `sIdle;
+    assign available = (requireCDB && resultAC) || stateOut == `sIdle;
     assign pmfAlUEN = available & inEN;
+    assign requireCDB = stateOut == `ALUAdd || stateOut == `sMAdd;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
