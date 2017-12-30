@@ -135,19 +135,20 @@ module ReservationStation(
 module state(
     input clk,
     input nRST,
-    output [1:0] stateOut,
+    output reg [1:0] stateOut,
     input inEN, // input ENable from reservation
     input resultAC, //whether result is ACcepted by CDB
-    output finished // send to CDB
+    output finished, // send to CDB
+    input op
 );
 module pmALU ( // plus/minus ALU
     input clk,
+    input nRST,
     input EN,
     input [31:0] dataIn1,
     input [31:0] dataIn2,
-    input pmALUop,
-    input resultAC,
-    output [31:0] result
+    input [1:0] state,
+    output reg [31:0] result
 );
 ```
 ### ALU for multiple and division

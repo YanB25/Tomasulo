@@ -1,11 +1,11 @@
 // ALUopcode
-`define ALUAdd 3'b000
-`define ALUSub 3'b001
-`define ALUAnd 3'b010
-`define ALUOr 3'b011
-`define ALUCmpu 3'b100
-`define ALUCmps 3'b101
-`define ALUSll 3'b110
+`define ALUAdd 2'b00
+`define ALUSub 2'b01
+`define ALUAnd 2'b10
+`define ALUOr 2'b11
+
+`define ALUMultiple 1'b0
+`define ALUDivide 1'b1
 
 // ExtSel
 `define ZeroExd 1'b0
@@ -47,6 +47,8 @@
 `define funcSLT 6'b101010
 `define funcJR 6'b000001
 
-// for RegWriteSrc
-`define FromPCplus4 1'b0
-`define FromDBDR 1'b1
+// ALU state
+`define sIdle 2'b00
+`define sAdd 2'b01
+`define sInverse 2'b10 // for Inverse
+`define sMAdd 2'b11 // for Minus Add
