@@ -131,16 +131,18 @@ module ReservationStation(
 #### IO Ports
 //TODO :: split it into state module and alu module
 ``` verilog
+
 module state(
     input clk,
     input nRST,
-    output [1:0] stateOut;
+    output [1:0] stateOut,
     input inEN, // input ENable from reservation
     input resultAC, //whether result is ACcepted by CDB
     output finished // send to CDB
-    );
+);
 module pmALU ( // plus/minus ALU
     input clk,
+    input EN,
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input pmALUop,
