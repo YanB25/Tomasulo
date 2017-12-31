@@ -37,6 +37,8 @@
 `define opBGTZ 6'b000111
 `define opJ 6'b000010
 `define opJAL 6'b011000
+`define opMULIU 6'b000000
+`define opDIVU 6'b000000
 `define opHALT 6'b111111
 // func code
 `define funcADD 6'b100000
@@ -46,7 +48,8 @@
 `define funcSLL 6'b000000
 `define funcSLT 6'b101010
 `define funcJR 6'b000001
-
+`define funcMULU 6'b001011
+`define funcDIVU 6'b011011
 // ALU state
 `define sIdle 0
 `define sAdd 2'b01
@@ -85,3 +88,8 @@
 `define QUE0 4'b11_00 
 `define QUE1 4'b11_01
 `define QUE2 4'b11_10
+
+// for ALUSel
+`define addsubALU 2'b00 
+`define multipleALU 2'b01 
+`define divideALU 2'b11
