@@ -8,6 +8,7 @@ module mfState(
     input requireAC,
     output available,
     output mdfALUEN, // determine whether mdfALU should work
+    input [1:0] op, // do nothing
     output require
 );
     assign available = (require && requireAC) || stateOut == `sIdle;
