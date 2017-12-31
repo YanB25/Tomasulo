@@ -30,10 +30,10 @@ module Outflow(
     assign readAddr2 = rt;
 
     always@(*) begin
-        label1 <= labelIn1;
-        value1 <= dataIn1;
-        label2 <= labelIn2;
-        value2 <= dataIn2;
+        label1 = labelIn1;
+        value1 = dataIn1;
+        label2 = labelIn2;
+        value2 = dataIn2;
 
 
     end
