@@ -1,5 +1,5 @@
 # Tomasulo
-## Contributing [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+ [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
 End-term project for Computer Organisation Principle Course.  
 An efficient pipeline CPU based on tomasulo algorithm, implemented in `verilog`
