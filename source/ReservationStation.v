@@ -7,7 +7,7 @@ module ReservationStation(
     input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
 
-    // input [1:0] ReservationStationIndex;// TODO:
+    input [1:0] ResStationDst;// TODO:
     input  opCode,
     input [31:0] dataIn1,
     input [3:0] label1,

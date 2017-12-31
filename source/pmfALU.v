@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 `include "head.v"
-module State(
+module pmfState(
     input clk,
     input nRST,
     output reg [1:0] stateOut,
