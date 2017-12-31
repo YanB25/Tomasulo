@@ -65,3 +65,12 @@
 `define sFPNorm 2'b11
 
 `define sWorking 1'b1
+
+// for RAMStation
+`define opLoad 1'b0
+`define opStore 1'b1
+
+// idLabel for Queue
+`define q0 4'b1111
+`define q1 4'b1110 
+`define q2 4'b1101

@@ -5,7 +5,7 @@ module RegFile(
     input nRST,
     input [4:0] ReadAddr1,
     input [4:0] ReadAddr2,
-    input RegWr,
+    input RegWr, //labelEN
     input [4:0] WriteAddr,
     input [4:0] WriteLabel,
     output [31:0] DataOut1,
