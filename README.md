@@ -7,11 +7,17 @@ Project for `computer organization principles course`
 $ git clone git@github.com:YanB25/Tomasulo.git
 ```
 ## Usage
-Manually add all the files in `scource/` into `vivado` and just run.
-## Overview
-<img src="/doc/pic/overview.png" style="height:20em"/>
+Manually add all the files in `scource/` into `vivado` and just run.  
+Add files in `test/`, set one of them *as top* to try the testcases.
+## Algorithm Introduction
+From [wiki](wiki)
+> Tomasulo’s algorithm is a computer architecture hardware algorithm for dynamic scheduling of instructions that allows out-of-order execution and enables more efficient use of multiple execution units. It was developed by Robert Tomasulo at IBM in 1967.
 
-## Terminology
+
+### The Whole Picture
+<img src="/doc/pic/overview.png" style="height:15em"/>
+
+### Terminology
 1. 块
 存储信息的单位。若干有关联的数据放在一起称为块。例如op和func和rs,rd,rt等存储在一起，称为一个块。
 1. 标志位
@@ -66,3 +72,4 @@ CDB保证其广播信号在一个周期内不发生更改。
 [cdb]:doc/Component/CommonDataBus.md
 [rf]:doc/Component/RegisterFile.md
 [alu]:doc/Component/ALUs.md
+[wiki]:https://en.wikipedia.org/wiki/Tomasulo_algorithm
