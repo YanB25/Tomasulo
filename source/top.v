@@ -100,7 +100,7 @@ module top(
     wire [3:0] Qj;
     wire [3:0] Qk;
     wire [31:0] Vj;
-    wire [31:0] Vk;
+    reg [31:0] Vk;
     // wire [31:0] Qi;
     // wire [31:0] A;
     //--------------------------
