@@ -7,15 +7,14 @@ module ReservationStation(
     input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
 
-    input [4:0] opCode,
-    input [4:0] func,
+    input  opCode,
     input [31:0] dataIn1,
-    input [4:0] label1,
+    input [3:0] label1,
     input [31:0] dataIn2,
-    input [4:0] label2,
+    input [3:0] label2,
 
     input BCEN, // BroadCast ENable
-    input [4:0] BClabel, // BoradCast label
+    input [3:0] BClabel, // BoradCast label
     input [31:0] BCdata, //BroadCast value
 
     output reg [4:0] opOut,
@@ -23,16 +22,16 @@ module ReservationStation(
     output reg [31:0] dataOut2,
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
-    output [4:0]labelOut
+    output [3:0]labelOut
     );
 
     // 设置了三个保留站
     // 若使b2'11来索引，无效
     reg Busy[2:0];
-    reg [4:0]Op[2:0];
-    reg [4:0]Qj[2:0];
+    reg Op[2:0];
+    reg [3:0]Qj[2:0];
     reg [31:0]Vj[2:0];
-    reg [4:0]Qk[2:0];
+    reg [3:0]Qk[2:0];
     reg [31:0]Vk[2:0];
 
     // 当前可写地址 ,2'b11则为不可写?
