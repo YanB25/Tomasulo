@@ -65,11 +65,11 @@ module Queue(
     always@(*) begin
         if (wbusy) // if busy, just assign the being popped item's idlabel to availableIdLabel
             availableIdLabel = IdLabel[0];
-        else if (IdLabel[0] != `q0 && IdLabel[1] != `q0 && IdLabel[2] != `q0)
-            availableIdLabel = `q0;
-        else if (IdLabel[0] != `q1 && IdLabel[1] != `q1 && IdLabel[2] != `q1)
-            availableIdLabel = `q1;
-        else availableIdLabel = `q2;
+        else if (IdLabel[0] != `QUE0 && IdLabel[1] != `QUE0 && IdLabel[2] != `QUE0)
+            availableIdLabel = `QUE0;
+        else if (IdLabel[0] != `QUE1 && IdLabel[1] != `QUE1 && IdLabel[2] != `QUE1)
+            availableIdLabel = `QUE1;
+        else availableIdLabel = `QUE2;
     end
 
     generate

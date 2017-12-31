@@ -70,7 +70,18 @@
 `define opLoad 1'b0
 `define opStore 1'b1
 
-// idLabel for Queue
-`define q0 4'b1111
-`define q1 4'b1110 
-`define q2 4'b1101
+// Labels code
+// dd-dd
+// category - id
+`define ALU0 4'b00_00 
+`define ALU1 4'b00_01 
+`define ALU2 4'b00_10 
+`define MUL0 4'b01_00 
+`define MUL1 4'b01_01 
+`define MUL2 4'b01_10 
+`define DIV0 4'b10_01 
+`define DIV1 4'b10_10 
+`define DIV2 4'b10_11 
+`define QUE0 4'b11_00 
+`define QUE1 4'b11_01
+`define QUE2 4'b11_10
