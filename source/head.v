@@ -8,7 +8,7 @@
 `define ALUDivide 1'b1
 
 // ExtSel
-`define ZeroExd 1'b0
+`define ZesroExd 1'b0
 `define SignExd 1'b1
 
 // PCSrc
