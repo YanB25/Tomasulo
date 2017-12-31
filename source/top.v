@@ -21,11 +21,11 @@ module top(
     wire [25:0] immd26;
     wire [31:0] rsData;
     wire [31:0] rtData;
-    wire [4:0] rsLabel;
-    wire [4:0] rtLabel;
+    wire [3:0] rsLabel;
+    wire [3:0] rtLabel;
     wire BCEN;
     wire [31:0] BCdata;
-    wire [4:0] BClabel;
+    wire [3:0] BClabel;
     PC pc(
         .clk,
         .nRST,

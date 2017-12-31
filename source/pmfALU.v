@@ -4,16 +4,16 @@ module State(
     input clk,
     input nRST,
     output reg [1:0] stateOut,
-    input inEN,
-    input resultAC,
+    input WEN,
+    input requireAC,
     output available,
     output pmfALUEN, // send to pmfALU as EN
     input op,
-    output requireCDB
+    output require
 );
-    assign available = (requireCDB && resultAC) || stateOut == `sIdle;
-    assign pmfAlUEN = available & inEN;
-    assign requireCDB = stateOut == `ALUAdd || stateOut == `sMAdd;
+    assign available = (require && requireAC) || stateOut == `sIdle;
+    assign pmfAlUEN = available && WEN;
+    assign require = stateOut == `ALUAdd || stateOut == `sMAdd;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
@@ -22,8 +22,8 @@ module State(
                 `sIdle : 
                     stateOut <= op == `ALUAdd ? `sAdd : `sInverse;
                 `sAdd, `sMAdd : begin
-                    if (resultAC) begin
-                        if (inEN) begin
+                    if (requireAC) begin
+                        if (WEN) begin
                             stateOut <= op == `ALUAdd ? `sAdd : `sInverse;
                         end else begin
                             stateOut <= `sIdle;

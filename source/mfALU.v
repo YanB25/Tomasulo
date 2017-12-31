@@ -4,26 +4,26 @@ module mfState(
     input clk,
     input nRST,
     output reg [2:0] stateOut, // to ALU
-    input inEN,
-    input resultAC,
+    input WEN,
+    input requireAC,
     output available,
     output mdfALUEN, // determine whether mdfALU should work
-    output requireCDB
+    output require
 );
-    assign available = (requireCDB && resultAC) || stateOut == `sIdle;
-    assign mdfALUEN = available && inEN;
-    assign requireCDB = stateOut == `sMulAnswer;
+    assign available = (require && requireAC) || stateOut == `sIdle;
+    assign mdfALUEN = available && WEN;
+    assign require = stateOut == `sMulAnswer;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
         end else begin
             case(stateOut)
                 `sMulAnswer:
-                    if (resultAC) begin
-                        stateOut <= inEN ? `sMul32 : `sIdle;
+                    if (requireAC) begin
+                        stateOut <= WEN ? `sMul32 : `sIdle;
                     end
                 `sIdle:
-                    if (inEN)
+                    if (WEN)
                         stateOut <= `sMul32;
                 default:
                     stateOut <= stateOut + 1;
