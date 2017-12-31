@@ -1,7 +1,7 @@
 # Tomasulo
-## Description
-An out-of-order execution algorithm for pipeline CPU.  
-Project for `computer organization principles course`
+End-term project for Computer Organisation Principle Course.  
+An efficient pipeline CPU based on tomasulo algorithm, implemented in `verilog`
+
 ## Installation
 ``` bash
 $ git clone git@github.com:YanB25/Tomasulo.git
@@ -13,6 +13,15 @@ Add files in `test/`, set one of them *as top* to try the testcases.
 From [wiki](wiki)
 > Tomasulo’s algorithm is a computer architecture hardware algorithm for dynamic scheduling of instructions that allows out-of-order execution and enables more efficient use of multiple execution units. It was developed by Robert Tomasulo at IBM in 1967.
 
+### Description
+Tomasulo algorithm is an out-of-order execution algorithm for pipeline CPU, which dynamically rearanges the order of instructions to minimize the idle time of execution units such as ALU and RAM.  
+The major innovations are below  
+
+- Register renaming in hardware
+- Reservation stations for all excution units
+- Common Data Bus to broadcast signals asychronously
+
+The Algorithm is a superior virsion for parellel  compared to the use of `scoreboarding` or other earlier algorithms.  
 
 ### The Whole Picture
 <img src="/doc/pic/overview.png" style="height:15em"/>
