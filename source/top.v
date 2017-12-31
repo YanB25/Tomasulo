@@ -74,27 +74,77 @@ module top(
         .BCdata
     );
 
+
+    // 假设已经搞定，译码完成，以下就是我想要的
+    wire [3:0] sel_alu;// 3,2,1,0 : lw,div,mul,alu
+    wire op;
+    wire [1:0] ResStationDst
+    wire [3:0] Qj;
+    wire [3:0] Qk;
+    wire [31:0] Vj;
+    wire [31:0] Vk;
+    wire [31:0] Qi;
+    wire [31:0] A;
+
+    wire alu_op;
+    wire alu_A;
+    wire alu_B;
+    wire alu_isReady;
+    wire alu_label;
+    wire alu_isfull;
+
     ReservationStation alu_reservationstation(
         .clk(clk),
         .nRST(nRST),
-        .EXEable(),
-        .WEN(),
-        .opCode(),
-        .dataIn1(),
-        .label1(),
-        .dataIn2(),
-        .label2(),
-
+        .EXEable(),// TODO:
+        .WEN(sel_alu[0]),
+        .ResStationDst(ResStationDst),
+        .opCode(op),
+        .dataIn1(Vj),
+        .label1(Qj),
+        .dataIn2(Vk),
+        .label2(Qk),
         .BCEN,
         .BClabel,
         .BCdata,
+        .opOut(alu_op),
+        .dataOut1(alu_A),
+        .DataOut2(alu_B),
+        .isFull(alu_isfull),
+        .OutEn(alu_isReady),
+        .labelOut(alu_label), 
+    );
 
-        .opOut(),
-        .dataOut1(),
-        .DataOut2(),
-        .isFull(),
-        .OutEn(),
-        .labelOut(), 
+
+
+
+    wire mul_op;
+    wire mul_A;
+    wire mul_B;
+    wire mul_label;
+    wire mul_isfull;
+    wire mul_isReady;
+
+    ReservationStation mul_reservationstation(
+        .clk(clk),
+        .nRST(nRST),
+        .EXEable(),// TODO:
+        .WEN(sel_alu[1]),
+        .ResStationDst(ResStationDst),
+        .opCode(op),
+        .dataIn1(Vj),
+        .label1(Qj),
+        .dataIn2(Vk),
+        .label2(Qk),
+        .BCEN,
+        .BClabel,
+        .BCdata,
+        .opOut(mul_op),
+        .dataOut1(mul_A),
+        .DataOut2(mul_B),
+        .isFull(mul_isfull),
+        .OutEn(mul_isReady),
+        .labelOut(mul_label), 
     );
 
     Queue load_store_queue(
@@ -117,7 +167,6 @@ module top(
     );
 
 
-     
 
 
 
