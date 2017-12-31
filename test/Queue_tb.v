@@ -1,5 +1,5 @@
 `timescale 1ns/1ps
-`include "head.v"
+`include "../source/head.v"
 module Queue_tb;
     reg clk = 0;
     reg nRST = 1;
@@ -21,8 +21,8 @@ module Queue_tb;
     reg [4:0] labelIn;
     reg opIN;
     reg BCEN;
-    reg BClabel;
-    reg BCdata;
+    reg [4:0]BClabel;
+    reg [31:0]BCdata;
     wire opOut;
     wire [31:0]dataOut;
     wire [31:0]labelOut;
@@ -49,6 +49,10 @@ module Queue_tb;
         BCdata = 25;
         dataIn = 30;
         labelIn = 2;
+        #10;
+        WEN = 0;
+        #10;
+        $finish;
     end
     Queue queue(
         .clk,
@@ -59,7 +63,7 @@ module Queue_tb;
         .require,
         .dataIn,
         .labelIn,
-        .opIn,
+        .opIN,
         .BCEN,
         .BClabel,
         .BCdata,
