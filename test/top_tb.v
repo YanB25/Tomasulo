@@ -16,7 +16,7 @@ module top_tb;
         clk = ~clk;
     end
     top top_(
-        .clk,
-        .nRST
+        .clk(clk),
+        .nRST(nRST)
     );
 endmodule

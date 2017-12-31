@@ -12,7 +12,7 @@ module pmfState(
     output require
 );
     assign available = (require && requireAC) || stateOut == `sIdle;
-    assign pmfAlUEN = available && WEN;
+    assign pmfALUEN = available && WEN;
     assign require = stateOut == `sPremitiveIns || stateOut == `sMAdd;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin

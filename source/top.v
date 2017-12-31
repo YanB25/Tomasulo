@@ -42,43 +42,43 @@ module top(
     wire vkSrc;
     
     PC pc_instance(
-        .clk,
-        .nRST,
-        .newpc,
-        .pcWrite,
-        .pc
+        .clk(clk),
+        .nRST(nRST),
+        .newpc(newpc),
+        .pcWrite(pcWrite),
+        .pc(pc)
     );
     PCHelper pc_helper(
-        .pc,
-        .immd16,
-        .immd26,
-        .sel,
+        .pc(pc),
+        .immd16(immd16),
+        .immd26(immd26),
+        .sel(sel),
         .rs(0), // rs here is data
         .newpc
     );
     ROM rom(
-        .nrd(0),
+        .nrd(1'b0),
         .dataOut(ins),
         .addr(pc)
     );
     Decoder decoder(
-        .ins,
-        .op,
-        .func,
-        .sftamt,
-        .rs,
-        .rt,
-        .rd,
-        .immd16,
-        .immd26
+        .ins(ins),
+        .op(op),
+        .func(func),
+        .sftamt(sftamt),
+        .rs(rs),
+        .rt(rt),
+        .rd(rd),
+        .immd16(immd16),
+        .immd26(immd26)
     );
 
     wire [3:0] cur_label;
     reg [4:0] writeDst;
 
     RegFile regfile(
-        .clk,
-        .nRST,
+        .clk(clk),
+        .nRST(nRST),
         .ReadAddr1(rs), // TODO:
         .ReadAddr2(rt),
         .RegWr(labelEN),
@@ -88,9 +88,9 @@ module top(
         .DataOut2(rtData),
         .LabelOut1(rsLabel),
         .LabelOut2(rtLabel),
-        .BCEN,
-        .BClabel,
-        .BCdata
+        .BCEN(BCEN),
+        .BClabel(BClabel),
+        .BCdata(BCdata)
     );
 
 
@@ -159,9 +159,9 @@ module top(
         .label1(Qj),
         .dataIn2(Vk),
         .label2(Qk),
-        .BCEN,
-        .BClabel,
-        .BCdata,
+        .BCEN(BCEN),
+        .BClabel(BClabel),
+        .BCdata(BCdata),
         .opOut(alu_op),
         .dataOut1(alu_A),
         .dataOut2(alu_B),
@@ -175,8 +175,8 @@ module top(
     wire pmfALUEN;
     wire pmfRequire;
     pmfState pmf_state(
-        .clk,
-        .nRST,
+        .clk(clk),
+        .nRST(nRST),
         .stateOut(pmfStateOut),
         .WEN(alu_isReady),
         .requireAC(requireAC_s[0]),
@@ -187,8 +187,8 @@ module top(
     );
 
     pmfALU pmf_alu(
-        .clk,
-        .nRST,
+        .clk(clk),
+        .nRST(nRST),
         .op(alu_op),
         .EN(pmfALUEN),
         .dataIn1(alu_A),
@@ -371,9 +371,9 @@ module top(
         .label1(mul_labelOut),
         // TODO: no link dfalu, memory
         .data2(0),
-        .label2(0),
+        .label2(4'b0),
         .data3(0),
-        .label3(0),
+        .label3(4'b0),
 
         .sel(requireAC_s),
         .dataOut(BCdata),
