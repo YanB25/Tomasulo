@@ -52,7 +52,7 @@
 `define funcDIVU 6'b011011
 // ALU state
 `define sIdle 0
-`define sAdd 2'b01
+`define sPremetiveIns 2'b01
 `define sInverse 2'b10 // for Inverse
 `define sMAdd 2'b11 // for Minus Add
 
