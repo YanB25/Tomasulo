@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 `include "head.v"
 // implement as queue.
-module RAMStation(
+module Queue(
     input clk,
     input nRST,
     input requireAC, // whether the ALU is available and ins can be issued
