@@ -7,8 +7,8 @@ module ReservationStation(
     input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
 
-    input [1:0] ResStationDst;// TODO:
-    input  opCode,
+    input [1:0] ResStationDst,// TODO:
+    input [1:0] opCode,
     input [31:0] dataIn1,
     input [3:0] label1,
     input [31:0] dataIn2,
@@ -18,9 +18,9 @@ module ReservationStation(
     input [3:0] BClabel, // BoradCast label
     input [31:0] BCdata, //BroadCast value
 
-    output reg [4:0] opOut,
-    output reg [31:0] dataOut1,
-    output reg [31:0] dataOut2,
+    output [1:0] opOut,
+    output [31:0] dataOut1,
+    output [31:0] dataOut2,
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
     output [3:0]labelOut
@@ -29,15 +29,15 @@ module ReservationStation(
     // 设置了三个保留站
     // 若使b2'11来索引，无效
     reg Busy[2:0];
-    reg Op[2:0];
+    reg [1:0]Op[2:0];
     reg [3:0]Qj[2:0];
     reg [31:0]Vj[2:0];
     reg [3:0]Qk[2:0];
     reg [31:0]Vk[2:0];
 
-    // 当前可写地址 ,2'b11则为不可写?
+    // 当前可写地址 ,2'b11则为不可�??
     reg [1:0] cur_addr ;
-    // 当前就绪地址,2'b11则为不可写?
+    // 当前就绪地址,2'b11则为不可�??
     reg [1:0] ready_addr ;
     initial begin
         Busy[0] = 0;
@@ -109,16 +109,12 @@ module ReservationStation(
         end
     end    
     
-    always@(*) begin
-        if (EXEable == 1 && ready_addr != 2'b11) begin
-            opOut = Op[ready_addr];
-            dataOut1 = Vj[ready_addr];
-            dataOut2 = Vk[ready_addr];
-        end
-        // maybe generate latch
-    end
+
+    assign opOut = Op[ready_addr];
+    assign dataOut1 = Vj[ready_addr];
+    assign dataOut2 = Vk[ready_addr];
     
-    // 优先译码，使用组合逻辑生成当前可写地址
+    // 优先译码，使用组合�?�辑生成当前可写地址
     // 若为2'b11则不可写
     always@(*) begin
         if (Busy[0] == 0) begin
@@ -138,7 +134,7 @@ module ReservationStation(
     assign isFull = & cur_addr;
 
     // 是否就绪
-    // 计算当前就绪地址，以及就绪状态?
+    // 计算当前就绪地址，以及就绪状�??
     always@(*)begin
         if (Busy[0] == 1 && Qj[0] == 0 && Qk[0] == 0) begin
             ready_addr = 2'b00;
@@ -159,6 +155,6 @@ module ReservationStation(
 
     assign OutEn = ~ (&ready_addr);
 
-    assign labelOut = {0,0,ready_addr};// TODO:
+    assign labelOut = {2'b00,ready_addr};// TODO:
 
 endmodule
