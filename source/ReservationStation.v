@@ -35,9 +35,9 @@ module ReservationStation(
     reg [3:0]Qk[2:0];
     reg [31:0]Vk[2:0];
 
-    // 当前可写地址 ,2'b11则为不可�??
+    // 当前可写地址 ,2'b11则为不可�??
     reg [1:0] cur_addr ;
-    // 当前就绪地址,2'b11则为不可�??
+    // 当前就绪地址,2'b11则为不可�??
     reg [1:0] ready_addr ;
     initial begin
         Busy[0] = 0;
@@ -45,7 +45,7 @@ module ReservationStation(
         Busy[2] = 0;
     end
     
-    always@(posedge clk) begin
+    always@(posedge clk or negedge nRST) begin
         if (nRST == 0) begin 
             Busy[0] <= 0;
             Busy[1] <= 0;
@@ -53,7 +53,7 @@ module ReservationStation(
         end
         else begin 
             if (WEN == 1) begin
-                if (EXEable == 1 && ready_addr != 2'b11) begin
+                if (EXEable && ready_addr != 2'b11) begin
                     Busy[ready_addr] <= 0;
                 end
                 if (cur_addr != 2'b11 && Busy[cur_addr] == 0) begin
@@ -114,7 +114,7 @@ module ReservationStation(
     assign dataOut1 = Vj[ready_addr];
     assign dataOut2 = Vk[ready_addr];
     
-    // 优先译码，使用组合�?�辑生成当前可写地址
+    // 优先译码，使用组合�?�辑生成当前可写地址
     // 若为2'b11则不可写
     always@(*) begin
         if (Busy[0] == 0) begin
@@ -134,7 +134,7 @@ module ReservationStation(
     assign isFull = & cur_addr;
 
     // 是否就绪
-    // 计算当前就绪地址，以及就绪状�??
+    // 计算当前就绪地址，以及就绪状�??
     always@(*)begin
         if (Busy[0] == 1 && Qj[0] == 0 && Qk[0] == 0) begin
             ready_addr = 2'b00;
