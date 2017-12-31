@@ -3,8 +3,8 @@
 module Outflow(
     output [4:0] readAddr1,
     output [4:0] readAddr2,
-    input [4:0] labelIn1,
-    input [4:0] labelIn2,
+    input [3:0] labelIn1,
+    input [3:0] labelIn2,
     input [31:0] dataIn1,
     input [31:0] dataIn2,
 
@@ -18,8 +18,8 @@ module Outflow(
     input [25:0] immd26,
     output [5:0] selALU,
     output [5:0] op,
-    output [4:0] label1,
-    output [4:0] label2,
+    output [3:0] label1,
+    output [3:0] label2,
     output [31:0] value1,
     output [31:0] value2,
     output [4:0] target,
