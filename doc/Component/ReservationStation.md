@@ -12,6 +12,21 @@
     1. 输入信号EXEable若反映ALU不可用， 则对应Busy位不修改，否则将已输出的指令对应的Busy清零
     2. 输出信号OutEn为0反映输出不可用（指令处于未就绪状态），反之则就绪，ALU可写
 
+## 编号
+|保留站名称|保留站编号|
+|:-:|:-:|
+|alu0|0000|
+|alu1|0001|
+|alu2|0010|
+|mul0|0100|
+|mul1|0101|
+|mul2|0110|
+|div0|1000|
+|div1|1001|
+|div2|1010|
+|data0|1100|
+|data1|1101|
+|data2|1110|
 
 ## IO Ports
 > 前提：用于索引label的地址的位数为5
@@ -19,23 +34,24 @@
 ``` verilog
 module ReservationStation(
     input clk,
+    input nRST,
     input EXEable, // whether the ALU is available and ins can be issued
     input WEN, // Write ENable
 
-    input opCode[4:0],
-    input func[4:0],
-    input dataIn1[31:0],
-    input label1[4:0],
-    input dataIn2[31:0],
-    input label2[4:0],
+    input [4:0] opCode,
+    input [4:0] func,
+    input [31:0] dataIn1,
+    input [4:0] label1,
+    input [31:0] dataIn2,
+    input [4:0] label2,
 
     input BCEN, // BroadCast ENable
-    input BClabel[4:0], // BoradCast label
-    input BCdata[31:0], //BroadCast value
+    input [4:0] BClabel, // BoradCast label
+    input [31:0] BCdata, //BroadCast value
 
-    output reg opOut[4:0];
-    output reg dataOut1[31:0],
-    output reg dataOut2[31:0],
+    output reg [4:0] opOut,
+    output reg [31:0] dataOut1,
+    output reg [31:0] dataOut2,
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
     output [4:0]labelOut

@@ -51,7 +51,8 @@ CDB保证其广播信号在一个周期内不发生更改。
 检查当前指令的`rd`,记录`rd`所等待的label。  
 [Details here][rf]
 ### Reservation Station 
-保留站。包括加减ALU保留站和乘除FPU的保留站。  
+保留站。包括加减ALU保留站和乘除的保留站。  
+
 每个CPU周期，一条算逻运算指令将发射到对应ALU保留站处。  
 该指令要么所有的操作数都已准备好（立即可以被执行，label==0），或部分操作数由`label`（label != 0）代替，正等待`CDB`的广播。 
 [more detail][rs]
