@@ -86,17 +86,19 @@ module top(
     wire [31:0] Qi;
     wire [31:0] A;
 
+    wire alu_EXEable;
     wire alu_op;
-    wire alu_A;
-    wire alu_B;
+    wire [31:0] alu_A;
+    wire [31:0] alu_B;
     wire alu_isReady;
-    wire alu_label;
+    wire [3:0] alu_label;
     wire alu_isfull;
+    wire [31:0] alu_result;
 
     ReservationStation alu_reservationstation(
         .clk(clk),
         .nRST(nRST),
-        .EXEable(),// TODO:
+        .EXEable(alu_EXEable),// TODO:
         .WEN(sel_alu[0]),
         .ResStationDst(ResStationDst),
         .opCode(op),
@@ -115,21 +117,49 @@ module top(
         .labelOut(alu_label), 
     );
 
+    wire [1:0]pmfStateOut;
+    wire pmfALUAvailable;
+    wire pmfALUEN;
+    wire pmfRequire;
+    pmfState pmf_state(
+        .clk,
+        .nRST,
+        .stateOut(pmfStateOut),
+        .WEN(alu_isReady),
+        .requireAC(),// TODO:
+        .available(alu_EXEable),
+        .pmfALUEN,
+        .op(alu_op),
+        .require()// TODO:
+    );
+
+    pmfALU pmf_alu(
+        .clk,
+        .nRST,
+        .EN(pmfALUEN),
+        .dataIn1(alu_A),
+        .dataIn2(alu_B),
+        .state(pmfStateOut),
+        .result(alu_result)
+    );
 
 
 
+
+    wire mul_EXEable;
     wire mul_op;
-    wire mul_A;
-    wire mul_B;
-    wire mul_label;
-    wire mul_isfull;
+    wire [31:0] mul_A;
+    wire [31:0] mul_B;
     wire mul_isReady;
+    wire [3:0] mul_label;
+    wire mul_isfull;
+    wire [31:0] mul_result;
 
     ReservationStation mul_reservationstation(
         .clk(clk),
         .nRST(nRST),
-        .EXEable(),// TODO:
-        .WEN(sel_alu[1]),
+        .EXEable(mul_EXEable),// TODO:
+        .WEN(sel_alu[0]),
         .ResStationDst(ResStationDst),
         .opCode(op),
         .dataIn1(Vj),
@@ -146,6 +176,35 @@ module top(
         .OutEn(mul_isReady),
         .labelOut(mul_label), 
     );
+
+    wire [1:0]mfStateOut;
+    wire mfALUAvailable;
+    wire mfALUEN;
+    wire mfRequire;
+    mfState mf_state(
+        .clk,
+        .nRST,
+        .stateOut(mfStateOut),
+        .WEN(mul_isReady),
+        .requireAC(),// TODO:
+        .available(mul_EXEable),
+        .mfALUEN,
+        .op(alu_op),
+        .require()// TODO:
+    );
+
+    pmfALU pmf_alu(
+        .clk,
+        .nRST,
+        .EN(pmfALUEN),
+        .dataIn1(alu_A),
+        .dataIn2(alu_B),
+        .state(pmfStateOut),
+        .result(alu_result)
+    );
+
+
+
 
     Queue load_store_queue(
         .clk,

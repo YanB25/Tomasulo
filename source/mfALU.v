@@ -7,36 +7,14 @@ module mfState(
     input WEN,
     input requireAC,
     output available,
-    output mdfALUEN, // determine whether mdfALU should work
+    output mfALUEN, // determine whether mdfALU should work
     input [1:0] op, // do nothing
     output require
 );
     assign available = (require && requireAC) || stateOut == `sIdle;
-    assign mdfALUEN = available && WEN;
-    assign require = stateOut == `sMulAnswer;
-    always@(posedge clk or negedge nRST) begin
-        if (!nRST) begin
-            stateOut <= `sIdle;
-        end else begin
-            case(stateOut)
-                `sMulAnswer:
-                    if (requireAC) begin
-                        stateOut <= WEN ? `sMul32 : `sIdle;
-                    end
-                `sIdle:
-                    if (WEN)
-                        stateOut <= `sMul32;
-                default:
-                    stateOut <= stateOut + 1;
-            endcase
-        end
-    end
-endmodule
-
-module mfALU(
-    input clk,
+    assign mfALUEN =input clk,
     input nRST,
-    input EN, // linked from state::mdfALUEN
+    input EN, // linked from state::mfALUEN
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [2:0] state,
