@@ -10,12 +10,12 @@ module ReservationStation(
     input [4:0] opCode,
     input [4:0] func,
     input [31:0] dataIn1,
-    input [4:0] label1,
+    input [3:0] label1,
     input [31:0] dataIn2,
-    input [4:0] label2,
+    input [3:0] label2,
 
     input BCEN, // BroadCast ENable
-    input [4:0] BClabel, // BoradCast label
+    input [3:0] BClabel, // BoradCast label
     input [31:0] BCdata, //BroadCast value
 
     output reg [4:0] opOut,
@@ -23,7 +23,7 @@ module ReservationStation(
     output reg [31:0] dataOut2,
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
-    output [4:0]labelOut
+    output [3:0]labelOut
     );
 
     // 设置了三个保留站

@@ -7,17 +7,17 @@ module RegFile(
     input [4:0] ReadAddr2,
     input RegWr, //labelEN
     input [4:0] WriteAddr,
-    input [4:0] WriteLabel,
+    input [3:0] WriteLabel,
     output [31:0] DataOut1,
     output [31:0] DataOut2,
-    output [4:0] LabelOut1,
-    output [4:0] LabelOut2,
+    output [3:0] LabelOut1,
+    output [3:0] LabelOut2,
     input BCEN,
-    input [4:0] BClabel,
+    input [3:0] BClabel,
     input [31:0] BCdata
     );
     reg [31:0] regData[1:31];
-    reg [4:0] regLabel[1:31];
+    reg [3:0] regLabel[1:31];
     assign DataOut1 = (ReadAddr1 == 0) ? 0 : regData[ReadAddr1];
     assign DataOut2 = (ReadAddr2 == 0) ? 0 : regData[ReadAddr2];
     assign LabelOut1 = (ReadAddr1 == 0) ? 0 : regLabel[ReadAddr1];

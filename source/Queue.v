@@ -10,22 +10,22 @@ module Queue(
     output require, // whether output is valid
 
     input [31:0] dataIn,
-    input [4:0] labelIn,
+    input [3:0] labelIn,
     input opIN,
 
     input BCEN, // BroadCast ENable
-    input [4:0] BClabel, // BoradCast label
+    input [3:0] BClabel, // BoradCast label
     input [31:0] BCdata, //BroadCast value
 
     output opOut,
     output [31:0] dataOut,
-    output [31:0] labelOut
+    output [3:0] labelOut
     );
 
     reg [3:0]Busy;
-    reg [4:0]Label[3:0];
+    reg [3:0]Label[3:0];
     reg [31:0]Data[3:0];
-    reg [4:0]IdLabel[3:0];
+    reg [3:0]IdLabel[3:0];
     reg [3:0]op;
     initial begin
         Label[3] = 0;
@@ -61,7 +61,7 @@ module Queue(
         else lastBusyIndex = -1;
     end
 
-    reg [4:0] availableIdLabel;
+    reg [3:0] availableIdLabel;
     always@(*) begin
         if (wbusy) // if busy, just assign the being popped item's idlabel to availableIdLabel
             availableIdLabel = IdLabel[0];

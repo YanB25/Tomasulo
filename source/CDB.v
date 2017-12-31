@@ -18,16 +18,16 @@ endmodule
 
 module CDB(
     input [31:0] data0,
-    input [4:0] label0,
+    input [3:0] label0,
     input [31:0] data1,
-    input [4:0] label1,
+    input [3:0] label1,
     input [31:0] data2,
-    input [4:0] label2,
+    input [3:0] label2,
     input [31:0] data3,
-    input [4:0] label3,
+    input [3:0] label3,
     input [3:0] sel,
     output [31:0] dataOut,
-    output [4:0] labelOut,
+    output [3:0] labelOut,
     output EN
 );
     assign dataOut = (sel[0] & data0) |
