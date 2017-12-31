@@ -96,5 +96,8 @@
 `define divideALU 2'b11
 
 // RegDst
-`define FromRd 0
-`define FromRt 1
+`define FromRd 1'b0
+`define FromRt 1'b1
+// vkSrc
+`define FromRtData 1'b0
+`define FromImmd 1'b1

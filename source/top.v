@@ -39,6 +39,7 @@ module top(
     wire [3:0] mul_labelOut;
     wire RegDst;
     wire [1:0]ResStatioinDst;
+    wire vkSrc;
     
     PC pc_instance(
         .clk,
@@ -106,7 +107,14 @@ module top(
     assign Qj = rsLabel;
     assign Qk = rtLabel;
     assign Vj = rsData;
-    assign Vk = rtData;
+    //TODO : simplify this
+    always@(*) begin
+        if (vkSrc == `FromRtData)
+            Vk = rtData;
+        else if (op == `opORI)
+            Vk = {16'b0, immd16};
+        else Vk = {16'b0, immd16};
+    end
     // assign Qi = 
 
     mux4to1_4 my_mux4to1_4(
@@ -371,6 +379,7 @@ module top(
         .ResStationEN,
         .isFull({1'b0, mul_isfull, alu_isfull}),
         .isFullOut(labelEN),
+        .vkSrc,
         .RegDst
     );
 

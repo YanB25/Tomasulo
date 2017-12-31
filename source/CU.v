@@ -8,7 +8,8 @@ module CU(
     output reg[3:0]ResStationEN,
     input [2:0]isFull,
     output isFullOut,
-    output RegDst
+    output RegDst,
+    output vkSrc
 );
     always@(*) begin
         case(op)
@@ -39,4 +40,5 @@ module CU(
     end
     assign isFullOut = isFull[ALUSel];
     assign RegDst = op == `opRFormat ? `FromRd : `FromRt;
+    assign vkSrc = op == `opRFormat ? `FromRtData : `FromImmd;
 endmodule    
