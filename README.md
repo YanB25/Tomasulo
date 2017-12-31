@@ -1,4 +1,6 @@
 # Tomasulo
+ [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
 End-term project for Computer Organisation Principle Course.  
 An efficient pipeline CPU based on tomasulo algorithm, implemented in `verilog`
 
@@ -71,29 +73,9 @@ CDB保证其广播信号在一个周期内不发生更改。
 [more detail][alu]
 
 ## Shining Points
-### Architecture
-框架流水线，局部并行化，部件多周期。  
-- 流水线
-总框架大致可以分为`指令发射`,`执行`,`广播`等三个阶段。各个阶段流水执行。即每个时钟周期（几乎）保证有一条指令被执行,一份数据被广播。  
-- 并行化
-多个ALU并行地执行数据。一旦指令的操作数准备完毕，即可从保留站发射到ALU处。各个ALU的运算独立进行，互不干涉。
-- 多周期
-部件多周期更符合实际情况，本设计中模拟了现实中的延时现象。所有执行和存储器件都在各个周期内分步骤完成。
+传统Tomasulo教材资料只给出了算法的软件模拟实现或伪代码实现。具体的硬件实现会遇到许多瓶颈。本项目对其中的一些难点做了突破，体现了一些创新性。
+[more detail][sp]
 
-### mALU
-利用阵列乘法器加速定点数乘法。  
-采用$32 + 16 +... +1=63$个简易的加法电路，按5层的方式排布成阵列，并行地计算乘法。将乘法的运行时间缩短至5个CPU时钟。
-### Queue in Hardware
-利用硬件实现队列。注意到并解决了所有的所有的难点。包括  
-
-- 计算空余位置号
-利用组合电路正确计算队列中的空余位置号
-- 分配保留站号
-每次新指令进队时，正确地分配唯一的保留站号
-- 处理广播冲突
-当进队的指令中的保留站号恰好为正在广播的保留站号时，队列能正确地将广播中的数据替换指令的数据，再写进队列里
-- 正确判断“伪满”
-若队列已满，但下一个周期到来时队列能发射一条指令，则队列实质上仍可以接受指令,并没有处于真正满的状态。本设计能正确识别“伪满”现象，最大限度保证指令流动。  
 
 ## Bugs & Helps
 To report a bug or get help, you can [Issues page][issue].
@@ -112,3 +94,4 @@ You can refer to [TODO-List][todo] find out what the project still need.
 [wiki]:https://en.wikipedia.org/wiki/Tomasulo_algorithm
 [issue]:https://github.com/YanB25/Tomasulo/issues
 [todo]:doc/TODO.md
+[sp]:doc/ShiningPoint.md
