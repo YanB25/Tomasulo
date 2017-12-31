@@ -8,23 +8,23 @@ module State(
     input requireAC,
     output available,
     output pmfALUEN, // send to pmfALU as EN
-    input op,
+    input [1:0]op,
     output require
 );
     assign available = (require && requireAC) || stateOut == `sIdle;
     assign pmfAlUEN = available && WEN;
-    assign require = stateOut == `ALUAdd || stateOut == `sMAdd;
+    assign require = stateOut == `sPremitiveIns || stateOut == `sMAdd;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             stateOut <= `sIdle;
         end else begin
             case (stateOut)
                 `sIdle : 
-                    stateOut <= op == `ALUAdd ? `sAdd : `sInverse;
+                    stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
                 `sAdd, `sMAdd : begin
                     if (requireAC) begin
                         if (WEN) begin
-                            stateOut <= op == `ALUAdd ? `sAdd : `sInverse;
+                            stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
                         end else begin
                             stateOut <= `sIdle;
                         end
