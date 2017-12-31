@@ -38,7 +38,7 @@ module top(
     wire [31:0] mul_result;
     wire [3:0] mul_labelOut;
     wire RegDst;
-    wire [1:0]ResStatioinDst;
+    wire [1:0]ResStationDst;
     wire vkSrc;
     
     PC pc_instance(
@@ -97,7 +97,7 @@ module top(
     // 假设已经搞定，译码完成，以下就是我想要的
     wire [3:0] ResStationEN;// 3,2,1,0 : lw,div,mul,alu
     wire [1:0] opcode;// updated by control_unit
-    wire [1:0] ResStationDst; // updated by control_unit
+    // wire [1:0] ResStationDst; // updated by control_unit
     wire [3:0] Qj;
     reg [3:0] Qk;
     wire [31:0] Vj;
@@ -386,7 +386,7 @@ module top(
         .op,
         .func,
         .ALUop(opcode),
-        .ALUSel(ResStatioinDst),
+        .ALUSel(ResStationDst),
         .ResStationEN,
         .isFull({1'b0, mul_isfull, alu_isfull}),
         .isFullOut(labelEN),

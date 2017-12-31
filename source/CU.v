@@ -21,6 +21,8 @@ module CU(
                     `funcAND : ALUop = `ALUAnd;
                     default : ALUop = `ALUOr;
                 endcase
+            `opADDI : ALUop = `ALUAdd;
+            `opORI : ALUop = `ALUOr;
             default:
                 ALUop = 1;
         endcase
