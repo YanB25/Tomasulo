@@ -8,7 +8,7 @@ module ReservationStation(
     input WEN, // Write ENable
 
     input [1:0] ResStationDst;// TODO:
-    input  opCode,
+    input [1:0] opCode,
     input [31:0] dataIn1,
     input [3:0] label1,
     input [31:0] dataIn2,
@@ -29,7 +29,7 @@ module ReservationStation(
     // 设置了三个保留站
     // 若使b2'11来索引，无效
     reg Busy[2:0];
-    reg Op[2:0];
+    reg [1:0]Op[2:0];
     reg [3:0]Qj[2:0];
     reg [31:0]Vj[2:0];
     reg [3:0]Qk[2:0];
