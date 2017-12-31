@@ -7,7 +7,7 @@ module RAM(
     input nRD, // 为0，正常读；为1,输出高组态
     input nWR, // 为0，写；为1，无操作
     output reg [31:0] Dataout,
-    output reg readStatus， // 如果输出有效则为1
+    output reg readStatus, // 如果输出有效则为1
     output reg writeStatus
     );
     integer R,W;
@@ -20,34 +20,64 @@ module RAM(
     reg [7:0] ram [0:60]; //存储器
     // 设置状态变量
     always@( negedge clk) begin
-        if (R == 0 && nRD = 0) begin
-            R = R + 1;
+        if (R == 0 && nRD == 0) begin
+            R <= 1;
         end
-        if (R == 10) begin
-            R = 0;
-            readStatus = 1;
+        else  begin
+            if (R == 0 && nRD == 1) begin
+                R <= 0;
+            end
+            else begin
+                if (R == 10) begin
+                    R <= 0;
+                end
+                else begin
+                    if (R != 0)
+                        R <= R + 1;
+                end
+            end
         end
         if (W == 0 && nWR == 0) begin
-            W = W+1;
+            W <= 1;
         end
-        if (W == 10) begin
-            W = 0;
-            writeStatus = 1;
+        else  begin
+            if (W == 0 && nWR == 1) begin
+                W <= 0;
+            end
+            else begin
+                if (W == 10) begin
+                    W <= 0;
+                end
+                else begin
+                    if (W != 0)
+                        W <= W + 1;
+                end
+            end
         end
     end
     always@(*) begin
         // if (readStatus == 1) begin
         if (R == 10) begin
-            Dataout[7:0] <= ram[address + 3]; 
-            Dataout[15:8] <= ram[address + 2];
-            Dataout[23:16] <= ram[address + 1];
-            Dataout[31:24] <= ram[address ];
+            Dataout[7:0] = ram[address + 3]; 
+            Dataout[15:8] = ram[address + 2];
+            Dataout[23:16] = ram[address + 1];
+            Dataout[31:24] = ram[address ];
+            readStatus = 1;
+        end
+        else begin
+            readStatus = 0;
         end
         if( W == 1 ) begin
-            ram[address] <= writeData[31:24];
-            ram[address+1] <= writeData[23:16];
-            ram[address+2] <= writeData[15:8];
-            ram[address+3] <= writeData[7:0];
+            ram[address] = writeData[31:24];
+            ram[address+1] = writeData[23:16];
+            ram[address+2] = writeData[15:8];
+            ram[address+3] = writeData[7:0];
+        end
+        if (W == 10) begin
+            writeStatus = 1;
+        end
+        else begin
+            writeStatus = 0;
         end
     end
 endmodule
