@@ -20,7 +20,8 @@ module pmfState(
         end else begin
             case (stateOut)
                 `sIdle : 
-                    stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
+                    if (WEN)
+                        stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
                 `sPremitiveIns, `sMAdd : begin
                     if (requireAC) begin
                         if (WEN) begin

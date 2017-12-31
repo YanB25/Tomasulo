@@ -132,8 +132,8 @@ module top(
         .sel(ResStationDst),
         .dataIn0(alu_label),
         .dataIn1(mul_label),
-        .dataIn2(0),
-        .dataIn3(0),
+        .dataIn2(4'b0),
+        .dataIn3(4'b0),
         .dataOut(cur_label)
     );
 
@@ -181,7 +181,7 @@ module top(
         .WEN(alu_isReady),
         .requireAC(requireAC_s[0]),
         .available(alu_EXEable),
-        .pmfALUEN,
+        .pmfALUEN(pmfALUEN),
         .op(alu_op),
         .require(require_s[0])
     );
