@@ -26,18 +26,24 @@ module CDB(
     input [31:0] data3,
     input [3:0] label3,
     input [3:0] sel,
-    output [31:0] dataOut,
-    output [3:0] labelOut,
+    output reg[31:0] dataOut,
+    output reg[3:0] labelOut,
     output EN
 );
-    assign dataOut = (sel[0] & data0) |
-        (sel[1] & data1) |
-        (sel[2] & data2) |
-        (sel[3] & data3);
-    assign labelOut = (sel[0] & label0) |
-        (sel[1] & data1) |
-        (sel[2] &data2) |
-        (sel[3] &data3);
-
-    assign EN = &sel;
+    always@(*) begin
+        if (sel[0]) begin
+            dataOut = data0;
+            labelOut = label0;
+        end else if (sel[1]) begin
+            dataOut = data1;
+            labelOut = label1;
+        end else if (sel[2]) begin
+            dataOut = data2;
+            labelOut = label2;
+        end else begin
+            dataOut = data3;
+            labelOut = label3;
+        end
+    end
+    assign EN = | sel;
 endmodule
