@@ -74,6 +74,7 @@ module top(
     );
 
     wire [3:0] cur_label;
+    reg [4:0] writeDst;
 
     RegFile regfile(
         .clk,
@@ -81,7 +82,7 @@ module top(
         .ReadAddr1(rs), // TODO:
         .ReadAddr2(rt),
         .RegWr(labelEN),
-        .WriteAddr(rd),
+        .WriteAddr(writeDst),
         .WriteLabel(cur_label), //TODO
         .DataOut1(rsData),
         .DataOut2(rtData),
@@ -98,24 +99,34 @@ module top(
     wire [1:0] opcode;// updated by control_unit
     wire [1:0] ResStationDst; // updated by control_unit
     wire [3:0] Qj;
-    wire [3:0] Qk;
+    reg [3:0] Qk;
     wire [31:0] Vj;
     reg [31:0] Vk;
     // wire [31:0] Qi;
     // wire [31:0] A;
     //--------------------------
     assign Qj = rsLabel;
-    assign Qk = rtLabel;
+    // assign Qk = rtLabel;
     assign Vj = rsData;
     //TODO : simplify this
     always@(*) begin
-        if (vkSrc == `FromRtData)
+        if (vkSrc == `FromRtData) begin
             Vk = rtData;
-        else if (op == `opORI)
-            Vk = {16'b0, immd16};
-        else Vk = {16'b0, immd16};
+            writeDst = rd;
+        end
+        else begin
+            if (op == `opORI) begin
+                Vk = {16'b0, immd16};
+                Qk = 4'b0000;
+                writeDst = rt; 
+            end
+            else begin
+                Vk = {{16{immd16[15]}},immd16};
+                Qk = 4'b0000;
+                writeDst = rt;
+            end 
+        end
     end
-    // assign Qi = 
 
     mux4to1_4 my_mux4to1_4(
         .sel(ResStationDst),
