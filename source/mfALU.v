@@ -12,7 +12,7 @@ module mfState(
     output require
 );
     assign available = (require && requireAC) || stateOut == `sIdle;
-    assign mdfALUEN = available && WEN;
+    assign mfALUEN = available && WEN;
     assign require = stateOut == `sMulAnswer;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
@@ -41,13 +41,23 @@ module mfALU(
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [2:0] state,
-    output reg [31:0] result
+    input [3:0] labelIn,
+    output reg [31:0] result,
+    output reg [3:0] labelOut
 );
     reg [31:0]temp32[0:31];
     reg [31:0]temp16[0:15];
     reg [31:0]temp8[0:7];
     reg [31:0]temp4[0:3];
     reg [31:0]temp2[0:1];
+
+    always@(posedge clk or negedge nRST) begin
+        if (!nRST) begin
+            labelOut <= 0;
+        end else if (EN) begin
+            labelOut <= labelIn;
+        end
+    end
 
     generate
         genvar i;  

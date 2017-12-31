@@ -306,11 +306,15 @@ module top(
     // test memory
     require_s[3] = 0
 
+
     CDBHelper(
         .requires(require_s),
         .accepts(requireAC_s)
     );
 
+    CDB(
+        .data0()
+    )
 
 
 endmodule
