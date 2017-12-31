@@ -6,7 +6,8 @@ module CU(
     output [1:0]ALUop,
     output [1:0]ALUSel,
     input [2:0]isFull,
-    output isFullOut
+    output isFullOut,
+    output RegDst
 );
     always@(*) begin
         case(op) begin
@@ -31,4 +32,5 @@ module CU(
         else ALUSel = `addsubALU;
     end
     assign isFullOut = isFull[ALUSel];
+    assign RegDst = op == `opRFormat ? `FromRd : `FromRt;
 endmodule    
