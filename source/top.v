@@ -73,4 +73,52 @@ module top(
         .BClabel,
         .BCdata
     );
-    
+
+    ReservationStation alu_reservationstation(
+        .clk(clk),
+        .nRST(nRST),
+        .EXEable(),
+        .WEN(),
+        .opCode(),
+        .dataIn1(),
+        .label1(),
+        .dataIn2(),
+        .label2(),
+
+        .BCEN,
+        .BClabel,
+        .BCdata,
+
+        .opOut(),
+        .dataOut1(),
+        .DataOut2(),
+        .isFull(),
+        .OutEn(),
+        .labelOut(), 
+    );
+
+    Queue load_store_queue(
+        .clk,
+        .nRST,
+        .requireAC(),
+        .WEN(),
+        .isFull(),
+        .require(),
+
+        .dataIn(),
+        .labelIn(),
+        .opIN(),
+        .BCEN,
+        .BClabel,
+        .BCdata,
+        .opOut(),
+        .dataOut(),
+        .labelOut()
+    );
+
+
+     
+
+
+
+endmodule

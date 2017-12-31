@@ -8,16 +8,9 @@ module Outflow(
     input [31:0] dataIn1,
     input [31:0] dataIn2,
 
-    input [5:0] op,
-    input [5:0] func,
-    input [4:0] sftamt,
-    input [4:0] rs,
-    input [4:0] rt,
-    input [4:0] rd,
-    input [15:0] immd16,
-    input [25:0] immd26,
+    input [31:0] ins,
     output [5:0] selALU,
-    output [5:0] op,
+    output  op,
     output [3:0] label1,
     output [3:0] label2,
     output [31:0] value1,
@@ -25,6 +18,14 @@ module Outflow(
     output [4:0] target,
     output [31:0] Imm,
     );
+    assign op = ins[31:26];
+    assign func = ins[5:0];
+    assign sftamt = ins[10:6];
+    assign rs = ins[25:21];
+    assign rt = ins[20:16];
+    assign rd = ins[15:11];
+    assign immd16 = ins[15:0];
+    assign immd26 = ins[25:0];
 
     assign readAddr1 = rs;
     assign readAddr2 = rt;
