@@ -7,9 +7,9 @@ module Memory(
     input [31:0] dataIn2,// A 
     input op,// for example, 1 is load, 0 is write
     input [31:0] writeData,
-    output reg [31:0] loadData,
-    output available,
-    output requireCDB,
+    output [31:0] loadData,
+    output reg available,
+    output reg requireCDB,
     input requireAC
 );
     reg [31:0] addr;
@@ -35,27 +35,28 @@ module Memory(
             end
             // States 从0 变成1，进入访存阶段
         end
-        if (States == 1 && readStatus == 0) begin
-            States <= 1;
-            nRD <= 1;
-        end
-        if (States == 1 && writeStatus == 0) begin
-            States <= 1;
-            nWR <= 1;
-        end
-        if (States == 1 && readStatus == 1) begin
-            States <= 2;
-            requireCDB <= 1;
-        end
-        if (States ==1 && writeStatus == 1) begin
-            States <= 0;
-            requireCDB <= 0;
-        end
-        if (States == 2 && requireAC == 0) begin
-            States <=2;
-        end
-        if (States == 2 && requireAC == 1) begin
-            States <= 0;
+        else begin
+            if (States == 1) begin
+                nRD <= 1;
+                nWR <= 1;
+                if (readStatus == 1) begin
+                    States <= 2;
+                    requireCDB <= 1;
+                end
+                if (writeStatus == 1) begin
+                    requireCDB <= 0;
+                    States <= 0;
+                end
+            end
+            else if (States == 2) begin
+                if (requireAC == 1) begin
+                    States <= 0;
+                end
+                else begin
+                    States <= 2;
+                end
+            end
+
         end
     end
 
@@ -74,7 +75,9 @@ module Memory(
         .writeData(writeData),
         .Dataout(loadData),
         .readStatus(readStatus),
-        .writeStatus(writeStatus)
+        .writeStatus(writeStatus),
+        .nRD(nRD),
+        .nWR(nWR)
     );
 
 endmodule
