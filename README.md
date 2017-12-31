@@ -27,7 +27,7 @@ From [wiki](wiki)
 ## Instruction Set
 支持除分支指令外的大部分常用MIPS指令。
 [指令集编码][is]
-想要[支持更多指令](#todo-list)？
+想要[支持更多指令][todo]？
 ## Component
 ### PC & ROM
 没有从图中画出来。向指令队列发射指令（当指令队列非满时。）
@@ -62,9 +62,14 @@ CDB保证其广播信号在一个周期内不发生更改。
 [more detail][alu]
 
 
-## TODO-List
-1. 支持分支指令。（通过阻塞防止冲突）
-    1. 支持前瞻执行。
+
+
+## Bugs & Helps
+To report a bug or get help, you can [Issues page][issue].
+
+## Contribute
+To offer codes, please contact us in the [Issues page][issue].  
+You can refer to [TODO-List][todo] find out what the project still need.  
 
 
 [rs]:doc/Component/ReservationStation.md
@@ -74,3 +79,5 @@ CDB保证其广播信号在一个周期内不发生更改。
 [rf]:doc/Component/RegisterFile.md
 [alu]:doc/Component/ALUs.md
 [wiki]:https://en.wikipedia.org/wiki/Tomasulo_algorithm
+[issue]:https://github.com/YanB25/Tomasulo/issues
+[todo]:doc/TODO.md

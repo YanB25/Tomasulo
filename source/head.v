@@ -93,3 +93,7 @@
 `define addsubALU 2'b00 
 `define multipleALU 2'b01 
 `define divideALU 2'b11
+
+// RegDst
+`define FromRd 0
+`define FromRt 1
