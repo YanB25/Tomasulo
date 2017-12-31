@@ -3,25 +3,23 @@
 module CU(
     input [5:0] op,
     input [5:0] func,
-    output [1:0]ALUop,
-    output [1:0]ALUSel,
-    output [3:0]ResStationEN,
+    output reg[1:0]ALUop,
+    output reg[1:0]ALUSel,
+    output reg[3:0]ResStationEN,
     input [2:0]isFull,
     output isFullOut,
     output RegDst
 );
     always@(*) begin
-        case(op) begin
+        case(op)
             `opRFormat:
                 case(func)
-                    `funcAdd, `funcMULU:
+                    `funcADD, `funcMULU:
                         ALUop = 0;  
                     `funcSUB : ALUop = `ALUSub;
                     `funcAND : ALUop = `ALUAnd;
                     default : ALUop = `ALUOr;
                 endcase
-            `opMULIU:
-                ALUop = 0;
             default:
                 ALUop = 1;
         endcase

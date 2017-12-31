@@ -16,7 +16,7 @@ module Outflow(
     output [31:0] value1,
     output [31:0] value2,
     output [4:0] target,
-    output [31:0] Imm,
+    output [31:0] Imm
     );
     assign op = ins[31:26];
     assign func = ins[5:0];

@@ -35,7 +35,6 @@ endmodule
 
 module mfALU(
     input clk,
-    assign mfALUEN =input clk,
     input nRST,
     input EN, // linked from state::mfALUEN
     input [31:0] dataIn1,

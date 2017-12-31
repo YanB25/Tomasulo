@@ -7,7 +7,7 @@ module ROM (
 
     reg [7:0] rom [0:99]; 
     initial begin 
-        $readmemh ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.txt", rom); 
+        $readmemh ("E:/code/Tomasulo/rom/rom.txt", rom); 
     end
     always @(*) begin
         if (nrd == 0) begin

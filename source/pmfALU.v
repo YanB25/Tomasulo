@@ -21,7 +21,7 @@ module pmfState(
             case (stateOut)
                 `sIdle : 
                     stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
-                `sAdd, `sMAdd : begin
+                `sPremitiveIns, `sMAdd : begin
                     if (requireAC) begin
                         if (WEN) begin
                             stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
@@ -44,6 +44,7 @@ module pmfALU(
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [1:0] state,
+    input [1:0]op,
     output reg [31:0] result,
     input [3:0] labelIn,
     output reg [3:0] labelOut
@@ -58,7 +59,7 @@ module pmfALU(
             inverseData2_latch <= 31'b0;
         end else begin
             case (state)
-                `sIdle, `sAdd, `sMAdd :
+                `sIdle, `sPremitiveIns, `sMAdd :
                     if (EN) begin
                         data1_latch <= dataIn1;
                         data2_latch <= dataIn2;
@@ -71,12 +72,16 @@ module pmfALU(
     end
 
     always@(*) begin
-        case (state)
-            `sAdd : 
+        case (op)
+            `ALUAdd : 
                 result = data1_latch + data2_latch;
-            `sInverse, `sMAdd : 
+            `ALUSub : 
                 result = data1_latch + inverseData2_latch;
-            default :
+            `ALUAnd :
+                result = data1_latch & data2_latch;
+            `ALUOr:
+                result = data1_latch & data2_latch;
+            default:
                 result = 32'b0;
         endcase
     end
