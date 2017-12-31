@@ -189,43 +189,127 @@ module top(
         .requireAC(),// TODO:
         .available(mul_EXEable),
         .mfALUEN,
-        .op(alu_op),
+        .op(mul_op),
         .require()// TODO:
     );
 
-    pmfALU pmf_alu(
+    mfALU mf_alu(
         .clk,
         .nRST,
-        .EN(pmfALUEN),
-        .dataIn1(alu_A),
-        .dataIn2(alu_B),
-        .state(pmfStateOut),
-        .result(alu_result)
+        .EN(mfALUEN),
+        .dataIn1(mul_A),
+        .dataIn2(mul_B),
+        .state(mfStateOut),
+        .result(mul_result)
     );
 
 
 
+    wire div_EXEable;
+    wire div_op;
+    wire [31:0] div_A;
+    wire [31:0] div_B;
+    wire div_isReady;
+    wire [3:0] div_label;
+    wire div_isfull;
+    wire [31:0] div_result;
 
-    Queue load_store_queue(
-        .clk,
-        .nRST,
-        .requireAC(),
-        .WEN(),
-        .isFull(),
-        .require(),
-
-        .dataIn(),
-        .labelIn(),
-        .opIN(),
+    ReservationStation div_reservationstation(
+        .clk(clk),
+        .nRST(nRST),
+        .EXEable(div_EXEable),// TODO:
+        .WEN(sel_alu[2]),
+        .ResStationDst(ResStationDst),
+        .opCode(op),
+        .dataIn1(Vj),
+        .label1(Qj),
+        .dataIn2(Vk),
+        .label2(Qk),
         .BCEN,
         .BClabel,
         .BCdata,
-        .opOut(),
-        .dataOut(),
-        .labelOut()
+        .opOut(div_op),
+        .dataOut1(div_A),
+        .DataOut2(div_B),
+        .isFull(div_isfull),
+        .OutEn(div_isReady),
+        .labelOut(div_label), 
     );
 
+    wire [1:0]dfStateOut;
+    wire dfALUAvailable;
+    wire dfALUEN;
+    wire dfRequire;
+    dfState df_state(
+        .clk,
+        .nRST,
+        .stateOut(dfStateOut),
+        .WEN(div_isReady),
+        .requireAC(),// TODO:
+        .available(div_EXEable),
+        .dfALUEN,
+        .op(div_op),
+        .require()// TODO:
+    );
 
+    dfALU df_alu(
+        .clk,
+        .nRST,
+        .EN(dfALUEN),
+        .dataIn1(div_A),
+        .dataIn2(div_B),
+        .state(dfStateOut),
+        .result(div_result)
+    );
+
+    // TODO: memory part
+    // wire memory_available;
+    // wire 
+    
+    // Queue opprendA_queue(
+    //     .clk,
+    //     .nRST,
+    //     .requireAC(memory_available),
+    //     .WEN(),
+    //     .isFull(),
+    //     .require(),
+    //     .dataIn(),
+    //     .labelIn(),
+    //     .opIN(),
+    //     .BCEN,
+    //     .BClabel,
+    //     .BCdata,
+    //     .opOut(),
+    //     .dataOut(),
+    //     .labelOut()
+    // );
+
+
+    // Memory yf_memory(
+    //     .clk,
+    //     .outEn,
+    //     .dataIn1,
+    //     .dataIn2,
+    //     .op,
+    //     .wrireData,
+    //     .loadData,
+    //     .available,
+    //     .requireCDB,
+    //     .requireAC
+    // );
+
+
+    // 3,2,1,0 ls, div ,mul ,alu
+    wire [3:0] require_s;
+    wire [3:0] requireAC_s;
+
+    // test memory
+    require_s[3] = 0
+
+    CDBHelper(
+        .requires(require_s),
+        .accepts(requireAC_s)
+    );
 
 
 

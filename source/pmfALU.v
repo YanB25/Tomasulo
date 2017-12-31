@@ -44,7 +44,9 @@ module pmfALU(
     input [31:0] dataIn1,
     input [31:0] dataIn2,
     input [1:0] state,
-    output reg [31:0] result
+    output reg [31:0] result,
+    input [3:0] labelIn,
+    output reg [3:0] labelOut
 );
     reg [31:0] data1_latch;
     reg [31:0] data2_latch;
@@ -60,6 +62,7 @@ module pmfALU(
                     if (EN) begin
                         data1_latch <= dataIn1;
                         data2_latch <= dataIn2;
+                        labelOut <= labelIn;
                     end
                 `sInverse :
                     inverseData2_latch <= ~data2_latch;
