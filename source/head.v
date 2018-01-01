@@ -71,8 +71,8 @@
 `define sWorking 1'b1
 
 // for RAMStation
-`define opLoad 1'b0
-`define opStore 1'b1
+`define opLoad 1'b1
+`define opStore 1'b0
 
 // Labels code
 // dd-dd
