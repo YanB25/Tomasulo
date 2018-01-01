@@ -36,7 +36,7 @@ module Memory_tb();
 
     Memory my_memory(
         .clk(clk),
-        .outEn(outEn),
+        .WEN(outEn),
         .dataIn1(dataIn1),
         .dataIn2(dataIn2),
         .op(op),
@@ -44,7 +44,7 @@ module Memory_tb();
         .requireAC(requireAC),
         .loadData(loadData),
         .available(available),
-        .requireCDB(requireCDB)
+        .require(requireCDB)
     );
     
 
