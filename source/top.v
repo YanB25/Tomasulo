@@ -113,6 +113,7 @@ module top(
     always@(*) begin
         if (vkSrc == `FromRtData) begin
             Vk = rtData;
+            Qk = rtLabel;
             writeDst = rd;
         end
         else begin

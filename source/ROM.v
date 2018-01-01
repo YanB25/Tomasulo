@@ -8,10 +8,10 @@ module ROM (
     reg [7:0] rom [0:99]; 
     initial begin 
         //$readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.mem", rom); 
-        $readmemb ("E:/code/Tomasulo/rom/rom.mem", rom); 
+        // $readmemb ("E:/code/Tomasulo/rom/rom.mem", rom); 
+        $readmemb ("E:/code/Tomasulo/rom/testcase3.mem", rom); 
         // $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/testcase2.mem", rom);
         // $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.mem", rom); 
-        $readmemb ("E:/code/Tomasulo/rom/rom.mem", rom); 
     end
     always @(*) begin
         if (nrd == 0) begin
