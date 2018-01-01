@@ -363,7 +363,7 @@ module top(
         .WEN(ResStationEN[3]),
         .isFull(),
         .require(),
-        .dataIn({{16{immd16[15]}},immd16}), // TODO: not generated
+        .dataIn({{16{immd16[15]}},immd16}),
         .labelIn(0),
         .opIN(QueueOp),
         .BCEN(BCEN),

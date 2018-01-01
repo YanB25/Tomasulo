@@ -4,6 +4,17 @@ Known Bugs are ordered by priority.
 - [first test case - walker_yf][1] **Passing**  
 - [second test case - yanb25][2] **Passing**  
 
+
+### testcase4
+测出问题：保留站busy位在有指令流入保留站的时候，没有在对应的busy位里写入1
+    (从而导致写寄存器状态表的保留站号有误)
+问题来源:
+    1. 保留站根据当前的CDB（准确的说是上一周期的CDB信号）的label，将对应的保留站的busy清零，表示该保留站的指令计算的数据已写入，指令可释放
+    2. 保留站BCEN信号来源于pmfALU，设计的问题，导致运行一条指令的时候，BCEN信号会有两个周期有效
+结果：
+    1. 两个周期有效，那就会在下一个周期的之后的两个上升沿都会进行更新CDB，**给busy清零**的操作，这里两次清零就会出问题（刚好下一条指令就要放到对应的位置呢？)
+修改：修改了pmfalu的状态转移方式，本来处于完成状态的alu有机会直接去到执行1阶段，现在强制先回到idle状态
+
 [1]:/rom/testcase1.md
 [2]:/rom/testcase2.md
 
