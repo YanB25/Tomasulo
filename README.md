@@ -76,6 +76,11 @@ CDB保证其广播信号在一个周期内不发生更改。
 传统Tomasulo教材资料只给出了算法的软件模拟实现或伪代码实现。具体的硬件实现会遇到许多瓶颈。本项目对其中的一些难点做了突破，体现了一些创新性。
 [more detail][sp]
 
+## Testcase & Known Bugs
+all testcase(s) have been passed.  
+welcome to pull request to contribute more testcases.  
+for testcases information or known bugs,  
+[check here][tckb]
 
 ## Bugs & Helps
 To report a bug or get help, you can [Issues page][issue].
@@ -95,3 +100,4 @@ You can refer to [TODO-List][todo] find out what the project still need.
 [issue]:https://github.com/YanB25/Tomasulo/issues
 [todo]:doc/TODO.md
 [sp]:doc/ShiningPoint.md
+[tckb]:doc/TestCaseKnownBug.md

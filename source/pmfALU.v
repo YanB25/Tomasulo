@@ -70,7 +70,7 @@ module pmfALU(
                         labelOut <= labelIn;
                     end
                 `sInverse :
-                    inverseData2_latch <= ~data2_latch;
+                    inverseData2_latch <= ~data2_latch + 1;
             endcase
         end
     end
