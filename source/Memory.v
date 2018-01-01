@@ -2,14 +2,15 @@
 
 module Memory(
     input clk,
-    input outEn,
-    input [31:0] dataIn1,// Qj
+    input WEN, input [31:0] dataIn1,// Qj
     input [31:0] dataIn2,// A 
     input op,// for example, 1 is load, 0 is write
     input [31:0] writeData,
+    input [3:0] labelIn,
+    output reg [3:0] labelOut, 
     output [31:0] loadData,
     output reg available,
-    output reg requireCDB,
+    output reg require,
     input requireAC
 );
     reg [31:0] addr;
@@ -24,40 +25,47 @@ module Memory(
     wire readStatus;
     wire writeStatus;
     always@( posedge clk ) begin
-        if (States == 0 && outEn == 1 ) begin
-            addr <= dataIn1 + dataIn2;
-            States <= 1;
-            if (op == 1) begin
-                nRD <= 0;
-            end
-            if (op == 0) begin
-                nWR <= 0;
-            end
+        if (States == 0) begin
+            if (WEN == 1) begin
+                addr <= dataIn1 + dataIn2;
+                labelOut <= labelIn;
+                States <= 1;
             // States 从0 变成1，进入访存阶段
+                if (op == 1) begin
+                    nRD <= 0;
+                end
+                if (op == 0) begin
+                    nWR <= 0;
+                end
+            end
+            else begin // WEN == 0
+                States <= 0;
+                nRD <= 1;
+                nWR <= 1;
+            end
         end
-        else begin
-            if (States == 1) begin
+        else if (States == 1) begin
                 nRD <= 1;
                 nWR <= 1;
                 if (readStatus == 1) begin
                     States <= 2;
-                    requireCDB <= 1;
+                    require <= 1;
                 end
                 if (writeStatus == 1) begin
-                    requireCDB <= 0;
+                    require <= 0;
                     States <= 0;
                 end
             end
-            else if (States == 2) begin
-                if (requireAC == 1) begin
-                    States <= 0;
-                end
-                else begin
-                    States <= 2;
-                end
+        else if (States == 2) begin
+            if (requireAC == 1) begin
+                States <= 0;
             end
-
+            else begin
+                States <= 2;
+            end
         end
+        else 
+            States <= 4;
     end
 
     always@(*) begin
