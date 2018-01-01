@@ -78,7 +78,7 @@ module ReservationStation(
             end
             // watch CDB
             if (BCEN == 1 ) begin 
-                if (BClabel[3:2] == ResStationDst+1) begin
+                if (BClabel[3:2] == ResStationDst) begin
                     Busy[BClabel[1:0]] <= 0;
                 end
                 if (Busy[0] == 1 && Qj[0] == BClabel) begin
@@ -155,7 +155,7 @@ module ReservationStation(
 
     assign OutEn = ~ (&ready_addr);
 
-    assign ready_labelOut = {ResStationDst+1,ready_addr};// TODO:
-    assign writeable_labelOut = {ResStationDst+1, cur_addr};
+    assign ready_labelOut = {ResStationDst,ready_addr};// TODO:
+    assign writeable_labelOut = {ResStationDst, cur_addr};
 
 endmodule
