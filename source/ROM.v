@@ -9,7 +9,7 @@ module ROM (
     initial begin 
         //$readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.mem", rom); 
         // $readmemb ("E:/code/Tomasulo/rom/rom.mem", rom); 
-        $readmemb ("E:/code/Tomasulo/rom/testcase4.mem", rom); 
+        $readmemb ("E:/code/Tomasulo/rom/testcase6.mem", rom); 
         // $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/testcase2.mem", rom);
         // $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.mem", rom); 
     end
