@@ -376,7 +376,7 @@ module top(
         .data3(0),
         .label3(4'b0),
 
-        .sel(requireAC_s),
+        .sel(require_s),
         .dataOut(BCdata),
         .labelOut(BClabel),
         .EN(BCEN)
