@@ -63,8 +63,8 @@ module Queue(
 
     reg [3:0] availableIdLabel;
     always@(*) begin
-        if (wbusy) // if busy, just assign the being popped item's idlabel to availableIdLabel
-            availableIdLabel = IdLabel[0];
+        if (wbusy) 
+            availableIdLabel = 4'bx; // if busy, it is don't-care signal
         else if (IdLabel[0] != `QUE0 && IdLabel[1] != `QUE0 && IdLabel[2] != `QUE0)
             availableIdLabel = `QUE0;
         else if (IdLabel[0] != `QUE1 && IdLabel[1] != `QUE1 && IdLabel[2] != `QUE1)
@@ -98,7 +98,7 @@ module Queue(
                             end
                         end 
                     end else begin
-                        if (i == lastBusyIndex) begin // WEN && issuable : queue must be available
+                        if (!wbusy && i == lastBusyIndex) begin // WEN && issuable : queue must be available
                             // Busy is also 1, so do not change
                             Data[i] <= BCEN && BClabel == labelIn ? BCdata : dataIn;
                             Label[i] <= BCEN && BClabel ==  labelIn ? 0 : labelIn;
