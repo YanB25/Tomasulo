@@ -4,6 +4,7 @@ module top(
     input clk,
     input nRST
 );
+    wire [5:0] op;
     //TODO:: not finished 
     wire pcWrite = op == `opHALT ? 0 : 1;
     wire [1:0]sel = 0;
@@ -12,7 +13,6 @@ module top(
     wire [31:0] pc;
     wire [31:0] newpc;
     wire [31:0] ins;
-    wire [5:0] op;
     wire isFullOut;
     wire [5:0] func;
     wire [4:0] sftamt;
@@ -364,7 +364,7 @@ module top(
         .isFull(),
         .require(queue_require[1]),
         .dataIn({{16{immd16[15]}},immd16}), // TODO: not generated
-        .labelIn(0),
+        .labelIn(4'b0),
         .opIN(QueueOp),
         .BCEN(BCEN),
         .BClabel(BClabel),
