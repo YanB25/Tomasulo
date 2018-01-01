@@ -213,7 +213,7 @@ module top(
         .clk(clk),
         .nRST(nRST),
         .EXEable(mul_EXEable),
-        .WEN(ResStationEN[0]),
+        .WEN(ResStationEN[1]),
         .ResStationDst(ResStationDst),
         .opCode(opcode),
         .dataIn1(Vj),
@@ -319,42 +319,6 @@ module top(
     //     .result(div_result)
     // );
 
-    // TODO: memory part
-    // wire memory_available;
-    // wire 
-    
-    // Queue opprendA_queue(
-    //     .clk,
-    //     .nRST,
-    //     .requireAC(memory_available),
-    //     .WEN(),
-    //     .isFull(),
-    //     .require(),
-    //     .dataIn(),
-    //     .labelIn(),
-    //     .opIN(),
-    //     .BCEN,
-    //     .BClabel,
-    //     .BCdata,
-    //     .opOut(),
-    //     .dataOut(),
-    //     .labelOut()
-    // );
-
-
-    // Memory yf_memory(
-    //     .clk,
-    //     .outEn,
-    //     .dataIn1,
-    //     .dataIn2,
-    //     .op,
-    //     .wrireData,
-    //     .loadData,
-    //     .available,
-    //     .requireCDB,
-    //     .requireAC
-    // );
-
 
     // 3,2,1,0 ls, div ,mul ,alu
     wire [3:0] require_s;
@@ -362,7 +326,90 @@ module top(
 
     // test memory
     assign require_s[2] = 0;
-    assign require_s[3] = 0;
+
+
+    wire RTOpOut;
+    wire [31:0]RTDataOut;
+    wire [3:0]RTLabelOut;
+    wire queue_isfull;
+    wire queue_require;
+    Queue opprendRT_queue(
+        .clk(clk),
+        .nRST(nRST),
+        .requireAC(memory_available),
+        .WEN(ResStationEN[3]),
+        .isFull(queue_isfull),
+        .require(queue_require),
+        .dataIn(rtData),
+        .labelIn(rtLabel),
+        .opIN(QueueOp),
+        .BCEN(BCEN),
+        .BClabel(BElabel),
+        .BCdata(BCdata),
+        .opOut(RTOpOut),
+        .dataOut(RTDataOut),
+        .labelOut(RTLabelOut)
+    );
+    wire ImmdOpOut;
+    wire [31:0]ImmdDataOut;
+    wire [3:0]ImmdLabelOut;
+    Queue opprendImmd_queue(
+        .clk(clk),
+        .nRST(nRST),
+        .requireAC(memory_available),
+        .WEN(ResStationEN[3]),
+        .isFull(),
+        .require(),
+        .dataIn(exd_immd16), // TODO not generated
+        .labelIn(0),
+        .opIN(QueueOp),
+        .BCEN(BCEN),
+        .BClabel(BClabel),
+        .BCdata(BCdata),
+        .opOut(ImmdOpOut),
+        .dataOut(ImmdDataOut),
+        .labelOut(ImmdLabelOut)
+    );
+    wire RSOpOut;
+    wire [31:0]RSDataOut;
+    wire [3:0]RSLabelOut;
+    Queue opprendRS_queue(
+        .clk(clk),
+        .nRST(nRST),
+        .requireAC(memory_available),
+        .WEN(ResStationEN[3]),
+        .isFull(),
+        .require(),
+        .dataIn(rsData), // TODO not generated
+        .labelIn(rsLabel),
+        .opIN(QueueOp),
+        .BCEN(BCEN),
+        .BClabel(BClabel),
+        .BCdata(BCdata),
+        .opOut(RSOpOut),
+        .dataOut(RSDataOut),
+        .labelOut(RSLabelOut)
+    );
+    wire [31:0]memory_loadData;
+    wire memory_available;
+    wire memory_require_CDB;
+    wire [3:0]memory_labelOut;
+    Memory yf_memory(
+        .clk,
+        .WEN(queue_require),
+        .dataIn1(RTDataOut),
+        .dataIn2(ImmdDataOut),
+        .op(RTOpOut),
+        .wrireData(RSDataOut),
+        .loadData(memory_loadData),
+        .available(memory_available),
+        .require(require_s[3]),
+        .requireAC(requireAC_s[3]),
+        .labelIn(RTLabelOut),
+        .labelOut(memory_labelOut)
+    );
+
+
 
 
     CDBHelper cdb_helper(
@@ -375,11 +422,11 @@ module top(
         .label0(alu_labelOut),
         .data1(mul_result),
         .label1(mul_labelOut),
-        // TODO: no link dfalu, memory
+        // TODO: no link dfalu
         .data2(0),
         .label2(4'b0),
-        .data3(0),
-        .label3(4'b0),
+        .data3(memory_loadData),
+        .label3(memory_labelOut),
 
         .sel(require_s),
         .dataOut(BCdata),
@@ -387,17 +434,18 @@ module top(
         .EN(BCEN)
     );
 
-
+    wire QueueOp;
     CU contril_unit(
         .op,
         .func,
         .ALUop(opcode),
         .ALUSel(ResStationDst),
         .ResStationEN,
-        .isFull({1'b0, mul_isfull, alu_isfull}),
+        .isFull({queue_isfull, mul_isfull, alu_isfull}),
         .isFullOut(isFullOut),
         .vkSrc,
-        .RegDst
+        .RegDst,
+        .QueueOp,
     );
 
     assign labelEN = ~isFullOut;

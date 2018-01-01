@@ -2,7 +2,7 @@
 
 module Memory(
     input clk,
-    input outEn,
+    input WEN,
     input [31:0] dataIn1,// Qj
     input [31:0] dataIn2,// A 
     input op,// for example, 1 is load, 0 is write
@@ -24,7 +24,7 @@ module Memory(
     wire readStatus;
     wire writeStatus;
     always@( posedge clk ) begin
-        if (States == 0 && outEn == 1 ) begin
+        if (States == 0 && WEN == 1 ) begin
             addr <= dataIn1 + dataIn2;
             States <= 1;
             if (op == 1) begin
