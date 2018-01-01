@@ -54,9 +54,6 @@ module ReservationStation(
         end
         else begin 
             if (WEN == 1) begin
-                if (EXEable && ready_addr != 2'b11) begin
-                    Busy[ready_addr] <= 0;
-                end
                 if (cur_addr != 2'b11 && Busy[cur_addr] == 0) begin
                     Busy[cur_addr] <= 1;
                     Op[cur_addr] <= opCode;
@@ -78,6 +75,9 @@ module ReservationStation(
                     end
                 end
                 //  maybe generate latch
+            end
+            if (EXEable && ready_addr != 2'b11) begin
+                Busy[ready_addr] <= 0;
             end
             // watch CDB
             if (BCEN == 1 ) begin 
