@@ -23,7 +23,8 @@ module ReservationStation(
     output [31:0] dataOut2,
     output isFull, // whether the buffer is full
     output OutEn, // whether output is valid
-    output [3:0]labelOut
+    output [3:0] ready_labelOut,
+    output [3:0] writeable_labelOut
     );
 
     // 设置了三个保留站
@@ -155,6 +156,7 @@ module ReservationStation(
 
     assign OutEn = ~ (&ready_addr);
 
-    assign labelOut = {2'b00,ready_addr};// TODO:
+    assign ready_labelOut = {ResStationDst+1,ready_addr};// TODO:
+    assign writeable_labelOut = {ResStationDst+1, cur_addr};
 
 endmodule
