@@ -4,7 +4,7 @@ Known Bugs are ordered by priority.
 - [first test case - walker_yf][1] **Passing**  
 - [second test case - yanb25][2] **Passing**  
 
-[1]:/rom/rom.mem
+[1]:/rom/testcase1.md
 [2]:/rom/testcase2.md
 
 ## Known Bugs
