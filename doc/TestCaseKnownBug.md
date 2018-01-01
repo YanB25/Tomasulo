@@ -2,14 +2,17 @@
 Known Bugs are ordered by priority.  
 ## Test Case
 [first test case][1]
-
+[second test case - yanb25][2]
 [1]:/rom/rom.mem
+[2]:/rom/testcase2.md
 ## Known Bugs
 ### Critical
 - ~~pmfALU~~ (fixed)   
 pmfALU does not correctly deal with substraction
 - ~~Reservation~~ (fixed)  
 Reservation does not recognise `halt` and keeps getting instructions.
+- Reservation  
+当数据没有流动时（即没有新指入站和（或）没有指令发射时），保留站无法根据广播更新指令的数据。
 ### Warning 
 - ReservationStation  
 没有在清零信号到来时，将所有的Qk,Qj,Vk,Vj等寄存器清零
