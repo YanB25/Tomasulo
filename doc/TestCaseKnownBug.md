@@ -16,6 +16,8 @@ Reservation does not recognise `halt` and keeps getting instructions.
 - error in issue
 所有的器件的“流出”时序错误。一个器件不能在“下游器件接受请求”就马上把busy清零，而应等到CDB将该指令的执行结果广播完毕后再清零。  
 与寄存器换名问题相关。  
+- PC & PCHelper
+halt doesn't work
 ### Warning 
 - ReservationStation  
 没有在清零信号到来时，将所有的Qk,Qj,Vk,Vj等寄存器清零

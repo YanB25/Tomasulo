@@ -76,11 +76,11 @@ module ReservationStation(
                 end
                 //  maybe generate latch
             end
-            if (EXEable && ready_addr != 2'b11) begin
-                Busy[ready_addr] <= 0;
-            end
             // watch CDB
             if (BCEN == 1 ) begin 
+                if (BClabel[3:2] == ResStationDst+1) begin
+                    Busy[BClabel[1:0]] <= 0;
+                end
                 if (Busy[0] == 1 && Qj[0] == BClabel) begin
                     Vj[0] = BCdata;
                     Qj[0] = 0;
