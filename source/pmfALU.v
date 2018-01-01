@@ -53,12 +53,15 @@ module pmfALU(
     reg [31:0] data1_latch;
     reg [31:0] data2_latch;
     reg [31:0] inverseData2_latch;
+    reg [1:0] op_latch;
     always@(posedge clk or negedge nRST) begin
         if (!nRST) begin
             data1_latch <= 32'b0;
             data2_latch <= 32'b0;
             inverseData2_latch <= 31'b0;
         end else begin
+            if (EN)
+                op_latch <= op;
             case (state)
                 `sIdle, `sPremitiveIns, `sMAdd :
                     if (EN) begin
@@ -73,7 +76,7 @@ module pmfALU(
     end
 
     always@(*) begin
-        case (op)
+        case (op_latch)
             `ALUAdd : 
                 result = data1_latch + data2_latch;
             `ALUSub : 

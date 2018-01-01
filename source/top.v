@@ -129,10 +129,13 @@ module top(
         end
     end
 
+    wire [3:0] alu_writeable_label;
+    wire [3:0] mul_writeable_label;
+
     mux4to1_4 my_mux4to1_4(
         .sel(ResStationDst),
-        .dataIn0(alu_label),
-        .dataIn1(mul_label),
+        .dataIn0(alu_writeable_label),
+        .dataIn1(mul_writeable_label),
         .dataIn2(4'b0),
         .dataIn3(4'b0),
         .dataOut(cur_label)
@@ -168,7 +171,8 @@ module top(
         .dataOut2(alu_B),
         .isFull(alu_isfull),
         .OutEn(alu_isReady),
-        .labelOut(alu_label)
+        .ready_labelOut(alu_label),
+        .writeable_labelOut(alu_writeable_label)
     );
 
     wire [1:0]pmfStateOut;
@@ -224,7 +228,8 @@ module top(
         .dataOut2(mul_B),
         .isFull(mul_isfull),
         .OutEn(mul_isReady),
-        .labelOut(mul_label)
+        .ready_labelOut(mul_label),
+        .writeable_labelOut(mul_writeable_label)
     );
 
     wire [2:0]mfStateOut;
