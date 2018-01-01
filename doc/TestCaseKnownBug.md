@@ -1,10 +1,12 @@
 # Test Case & Known Bugs
 Known Bugs are ordered by priority.  
 ## Test Case
-[first test case][1]
-[second test case - yanb25][2]
+- [first test case - walker_yf][1] **Passing**  
+- [second test case - yanb25][2] **Passing**  
+
 [1]:/rom/rom.mem
 [2]:/rom/testcase2.md
+
 ## Known Bugs
 ### Critical
 - ~~pmfALU~~ (fixed)   
