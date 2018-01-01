@@ -6,7 +6,8 @@ Known Bugs are ordered by priority.
 [1]:/rom/rom.mem
 ## Known Bugs
 ### Critical
-None
+- ~~pmfALU~~ (fixed)   
+pmfALU does not correctly deal with substraction
 ### Warning 
 - ReservationStation  
 没有在清零信号到来时，将所有的Qk,Qj,Vk,Vj等寄存器清零
