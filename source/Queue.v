@@ -87,7 +87,7 @@ module Queue(
                         if (!wbusy && i == first_empty) begin //Wen && !issuable && !busy
                             // input data to the first empty position
                             Busy[i] <= 1;
-                            Data[i] <= BCEN && BClabel==Label[i] ? BCdata : dataIn;
+                            Data[i] <= BCEN && BClabel==LabelIn ? BCdata : dataIn;
                             Label[i] <= BCEN && BClabel == labelIn ? 0 : labelIn;
                             op[i] <= opIN;
                             IdLabel[i] <= availableIdLabel;
