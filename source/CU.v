@@ -38,6 +38,8 @@ module CU(
         else begin
             ALUSel = `addsubALU;
             ResStationEN = 4'b0001;
+        end else begin
+            ResStationEN = 4'b0000;
         end
     end
     assign isFullOut = isFull[ALUSel];
