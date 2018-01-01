@@ -41,7 +41,7 @@ module top(
     wire RegDst;
     wire [1:0]ResStationDst;
     wire vkSrc;
-    
+    wire [3:0]queue_writeable_label;
     PC pc_instance(
         .clk(clk),
         .nRST(nRST),
@@ -134,11 +134,11 @@ module top(
     wire [3:0] mul_writeable_label;
 
     mux4to1_4 my_mux4to1_4(
-        .sel(ResStationDst),
+        .sel((op == `opLW || op == `opSW) ? 2'b11 : ResStationDst),
         .dataIn0(alu_writeable_label),
         .dataIn1(mul_writeable_label),
         .dataIn2(4'b0),
-        .dataIn3(4'b0),
+        .dataIn3(queue_writeable_label),
         .dataOut(cur_label)
     );
 
@@ -336,6 +336,8 @@ module top(
     wire [3:0]RTLabelOut;
     wire queue_isfull;
     wire [2:0]queue_require;
+    wire isLastState; //TODO
+
     Queue opprendRT_queue(
         .clk(clk),
         .nRST(nRST),
@@ -351,7 +353,9 @@ module top(
         .BCdata(BCdata),
         .opOut(RTOpOut),
         .dataOut(RTDataOut),
-        .labelOut(RTLabelOut)
+        .labelOut(RTLabelOut),
+        .isLastState(isLastState),
+        .queue_writeable_label(queue_writeable_label)
     );
     wire ImmdOpOut;
     wire [31:0]ImmdDataOut;
@@ -371,7 +375,9 @@ module top(
         .BCdata(BCdata),
         .opOut(ImmdOpOut),
         .dataOut(ImmdDataOut),
-        .labelOut(ImmdLabelOut)
+        .labelOut(ImmdLabelOut),
+        .isLastState(isLastState),
+        .queue_writeable_label()
     );
     wire RSOpOut;
     wire [31:0]RSDataOut;
@@ -391,7 +397,9 @@ module top(
         .BCdata(BCdata),
         .opOut(RSOpOut),
         .dataOut(RSDataOut),
-        .labelOut(RSLabelOut)
+        .labelOut(RSLabelOut),
+        .isLastState(isLastState),
+        .queue_writeable_label()
     );
     wire [31:0]memory_loadData;
     wire memory_require_CDB;
@@ -408,7 +416,8 @@ module top(
         .require(require_s[3]),
         .requireAC(requireAC_s[3]),
         .labelIn(RTLabelOut),
-        .labelOut(memory_labelOut)
+        .labelOut(memory_labelOut),
+        .isLastState(isLastState)
     );
 
 

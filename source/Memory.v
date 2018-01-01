@@ -12,7 +12,8 @@ module Memory(
     output [31:0] loadData,
     output reg available,
     output reg require,
-    input requireAC
+    input requireAC,
+    output isLastState
 );
     reg [31:0] addr;
     reg nRD;
@@ -75,7 +76,7 @@ module Memory(
             available = 0;
         end
         else begin
-            available = WEN; //TODO :maybe bugs not a good implementation
+            available = 1; //TODO :maybe bugs not a good implementation
         end
     end
 
@@ -87,7 +88,8 @@ module Memory(
         .readStatus(readStatus),
         .writeStatus(writeStatus),
         .nRD(nRD),
-        .nWR(nWR)
+        .nWR(nWR),
+        .isLastState(isLastState)
     );
 
 endmodule

@@ -8,9 +8,11 @@ module RAM(
     input nWR, // 为0，写；为1，无操作
     output reg [31:0] Dataout,
     output reg readStatus, // 如果输出有效则为1
-    output reg writeStatus
+    output reg writeStatus,
+    output isLastState
     );
     integer R,W;
+    assign isLastState = R == 9 || W == 9; //TODO
     initial begin
       R = 0;
       W = 0;

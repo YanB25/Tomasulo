@@ -28,6 +28,7 @@ module CU(
                 ALUop = 1;
         endcase
         if (op == `opHALT) begin
+            //ALUSel = 2'b00;
             ResStationEN = 4'b0000;
         end
         else if (func == `funcMULU) begin
@@ -39,6 +40,7 @@ module CU(
             ResStationEN = 4'b0100;
         end 
         else if (op == `opLW || op == `opSW) begin
+            //ALUSel = 2'b11;
             ResStationEN = 4'b1000;
         end else begin
             ALUSel = `addsubALU;

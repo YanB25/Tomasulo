@@ -19,9 +19,12 @@ module Queue(
 
     output opOut,
     output [31:0] dataOut,
-    output [3:0] labelOut
+    output [3:0] labelOut,
+    input isLastState,
+    output [3:0] queue_writeable_label
     );
-
+    reg [3:0]availableIdLabel;
+    assign queue_writeable_label = availableIdLabel;
     reg [3:0]Busy;
     reg [3:0]Label[3:0];
     reg [31:0]Data[3:0];
@@ -42,7 +45,8 @@ module Queue(
     wire wbusy = Busy[0] && Busy[1] && Busy[2];
     assign isFull = !issuable && wbusy;
     assign require = Busy[0] && Label[0] == 0;
-
+    wire poppable;
+    assign poppable = isLastState;
     
     reg [1:0] first_empty;
     always@(*) begin
@@ -62,7 +66,6 @@ module Queue(
         else lastBusyIndex = -1;
     end
 
-    reg [3:0] availableIdLabel;
     always@(*) begin
         if (wbusy) 
             availableIdLabel = 4'bx; // if busy, it is don't-care signal
@@ -84,7 +87,7 @@ module Queue(
                     IdLabel[i] <= 0;
                     op[i] <= 0;
                 end else if (WEN) begin
-                    if (!issuable) begin
+                    if (!poppable) begin
                         if (!wbusy && i == first_empty) begin //Wen && !issuable && !busy
                             // input data to the first empty position
                             Busy[i] <= 1;
@@ -113,7 +116,7 @@ module Queue(
                         end
                     end
                 end else begin
-                    if (issuable) begin
+                    if (poppable) begin
                         if (i == lastBusyIndex) begin //!Wen && issuable
                             Busy[i] <= 0;
                             Data[i] <= 0;
