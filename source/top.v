@@ -335,14 +335,14 @@ module top(
     wire [31:0]RTDataOut;
     wire [3:0]RTLabelOut;
     wire queue_isfull;
-    wire queue_require;
+    wire [2:0]queue_require;
     Queue opprendRT_queue(
         .clk(clk),
         .nRST(nRST),
         .requireAC(memory_available),
         .WEN(ResStationEN[3]),
         .isFull(queue_isfull),
-        .require(queue_require),
+        .require(queue_require[0]),
         .dataIn(rtData),
         .labelIn(rtLabel),
         .opIN(QueueOp),
@@ -362,7 +362,7 @@ module top(
         .requireAC(memory_available),
         .WEN(ResStationEN[3]),
         .isFull(),
-        .require(),
+        .require(queue_require[1]),
         .dataIn({{16{immd16[15]}},immd16}), // TODO: not generated
         .labelIn(0),
         .opIN(QueueOp),
@@ -382,7 +382,7 @@ module top(
         .requireAC(memory_available),
         .WEN(ResStationEN[3]),
         .isFull(),
-        .require(),
+        .require(queue_require[2]),
         .dataIn(rsData),
         .labelIn(rsLabel),
         .opIN(QueueOp),
@@ -398,7 +398,7 @@ module top(
     wire [3:0]memory_labelOut;
     Memory yf_memory(
         .clk(clk),
-        .WEN(queue_require),
+        .WEN(&queue_require),
         .dataIn1(RTDataOut),
         .dataIn2(ImmdDataOut),
         .op(RTOpOut),
