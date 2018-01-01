@@ -9,7 +9,7 @@ module top_tb;
         #2;
         nRST = 1;
         #60;
-        $finish;
+        
     end
     always begin
         #5;
