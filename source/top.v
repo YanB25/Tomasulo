@@ -362,13 +362,8 @@ module top(
         .requireAC(memory_available),
         .WEN(ResStationEN[3]),
         .isFull(),
-<<<<<<< HEAD
-        .require(),
-        .dataIn({{16{immd16[15]}},immd16}),
-=======
         .require(queue_require[1]),
         .dataIn({{16{immd16[15]}},immd16}), // TODO: not generated
->>>>>>> d8b0d98e4ca05244e5af1e43c67a3b296bce2fa1
         .labelIn(0),
         .opIN(QueueOp),
         .BCEN(BCEN),
