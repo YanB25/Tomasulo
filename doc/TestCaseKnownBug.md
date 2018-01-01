@@ -11,8 +11,11 @@ Known Bugs are ordered by priority.
 pmfALU does not correctly deal with substraction
 - ~~Reservation~~ (fixed)  
 Reservation does not recognise `halt` and keeps getting instructions.
-- Reservation  
+- ~~Reservation~~（fixed)  
 当数据没有流动时（即没有新指入站和（或）没有指令发射时），保留站无法根据广播更新指令的数据。
+- error in issue
+所有的器件的“流出”时序错误。一个器件不能在“下游器件接受请求”就马上把busy清零，而应等到CDB将该指令的执行结果广播完毕后再清零。  
+与寄存器换名问题相关。  
 ### Warning 
 - ReservationStation  
 没有在清零信号到来时，将所有的Qk,Qj,Vk,Vj等寄存器清零
