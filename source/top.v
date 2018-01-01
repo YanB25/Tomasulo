@@ -13,6 +13,7 @@ module top(
     wire [31:0] newpc;
     wire [31:0] ins;
     wire [5:0] op;
+    wire isFullOut;
     wire [5:0] func;
     wire [4:0] sftamt;
     wire [4:0] rs;
@@ -389,10 +390,11 @@ module top(
         .ALUSel(ResStationDst),
         .ResStationEN,
         .isFull({1'b0, mul_isfull, alu_isfull}),
-        .isFullOut(labelEN),
+        .isFullOut(isFullOut),
         .vkSrc,
         .RegDst
     );
 
+    assign labelEN = ~isFullOut;
 
 endmodule

@@ -11,8 +11,10 @@ module CDBHelper(
             accepts = 4'b0100;
         else if (requires[1])
             accepts = 4'b0010;
-        else
+        else if (requires[0])
             accepts = 4'b0001;
+        else
+            accepts = 4'b0000;
     end
 endmodule
 
