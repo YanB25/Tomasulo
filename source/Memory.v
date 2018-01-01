@@ -74,7 +74,7 @@ module Memory(
             available = 0;
         end
         else begin
-            available = 1;
+            available = require ; //TODO :maybe bugs not a good implementation
         end
     end
 

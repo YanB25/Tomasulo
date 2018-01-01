@@ -3,6 +3,9 @@ Known Bugs are ordered by priority.
 ## Test Case
 - [first test case - walker_yf][1] **Passing**  
 - [second test case - yanb25][2] **Passing**  
+- [third test case - walker_yf][3] **Passing**
+- [forth test case - walker_yf][4] **Fail**
+- [fifth test case - yanb25][5] **Running**
 
 
 ### testcase4
@@ -17,6 +20,9 @@ Known Bugs are ordered by priority.
 
 [1]:/rom/testcase1.md
 [2]:/rom/testcase2.md
+[3]:/rom/testcase3.md
+[4]:/rom/testcase4.md
+[5]:/rom/testcase5.md
 
 ## Known Bugs
 ### Critical

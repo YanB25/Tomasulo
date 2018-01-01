@@ -9,8 +9,13 @@ module ROM (
     initial begin 
         //$readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.mem", rom); 
         // $readmemb ("E:/code/Tomasulo/rom/rom.mem", rom); 
+<<<<<<< HEAD
         $readmemb ("E:/code/Tomasulo/rom/testcase6.mem", rom); 
         // $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/testcase2.mem", rom);
+=======
+        //$readmemb ("E:/code/Tomasulo/rom/testcase5.mem", rom); 
+         $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/testcase5.mem", rom);
+>>>>>>> d8b0d98e4ca05244e5af1e43c67a3b296bce2fa1
         // $readmemb ("C:/Users/Administrator/Desktop/workplace/Tomasulo/rom/rom.mem", rom); 
     end
     always @(*) begin
