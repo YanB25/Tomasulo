@@ -399,10 +399,10 @@ module top(
     Memory yf_memory(
         .clk(clk),
         .WEN(&queue_require),
-        .dataIn1(RTDataOut),
+        .dataIn1(RSDataOut),
         .dataIn2(ImmdDataOut),
         .op(RTOpOut),
-        .writeData(RSDataOut),
+        .writeData(RTDataOut),
         .loadData(memory_loadData),
         .available(memory_available),
         .require(require_s[3]),
