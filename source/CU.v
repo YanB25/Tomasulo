@@ -26,8 +26,10 @@ module CU(
             default:
                 ALUop = 1;
         endcase
-
-        if (func == `funcMULU) begin
+        if (op == `opHALT) begin
+            ResStationEN = 4'b0000;
+        end
+        else if (func == `funcMULU) begin
             ALUSel = `multipleALU;
             ResStationEN = 4'b0010;
         end
@@ -38,7 +40,7 @@ module CU(
         else begin
             ALUSel = `addsubALU;
             ResStationEN = 4'b0001;
-        end
+        end 
     end
     assign isFullOut = isFull[ALUSel];
     assign RegDst = op == `opRFormat ? `FromRd : `FromRt;

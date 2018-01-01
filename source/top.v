@@ -5,8 +5,8 @@ module top(
     input nRST
 );
     //TODO:: not finished 
-    reg pcWrite = 1;
-    reg [1:0]sel = 0;
+    wire pcWrite = op == `opHALT ? 0 : 1;
+    wire [1:0]sel = 0;
     //TODO END
     wire labelEN;
     wire [31:0] pc;
