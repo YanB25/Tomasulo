@@ -38,10 +38,12 @@ module CU(
             ALUSel = `divideALU;
             ResStationEN = 4'b0100;
         end 
-        else begin
+        else if (op == `opLW || op == `opSW) begin
+            ResStationEN = 4'b1000;
+        end else begin
             ALUSel = `addsubALU;
             ResStationEN = 4'b0001;
-        end 
+        end
     end
     assign isFullOut = isFull[ALUSel];
     assign RegDst = op == `opRFormat ? `FromRd : `FromRt;
