@@ -6,7 +6,7 @@ Known Bugs are ordered by priority.
 - [third test case - walker_yf][3] **Passing**
 - [forth test case - walker_yf][4] **Fail**
 - [fifth test case - yanb25][5] **Running**
-- [sixth test case - walker_yf][6] **Fail**
+- [sixth test case - walker_yf][6] **Passing**
 
 
 [1]:/rom/testcase1.md
