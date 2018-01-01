@@ -78,33 +78,32 @@ module ReservationStation(
                     end
                 end
                 //  maybe generate latch
-            
-                // 从CDB总线中写
-                if (BCEN == 1 ) begin 
-                    if (Busy[0] == 1 && Qj[0] == BClabel) begin
-                        Vj[0] = BCdata;
-                        Qj[0] = 0;
-                    end
-                    if (Busy[1] == 1 && Qj[1] == BClabel) begin
-                        Vj[1] = BCdata;
-                        Qj[1] = 0;
-                    end
-                    if (Busy[2] == 1 && Qj[2] == BClabel) begin
-                        Vj[2] = BCdata;
-                        Qj[2] = 0;
-                    end
-                    if (Busy[0] == 1 && Qk[0] == BClabel) begin
-                        Vk[0] = BCdata;
-                        Qk[0] = 0;
-                    end
-                    if (Busy[1] == 1 && Qk[1] == BClabel) begin
-                        Vk[1] = BCdata;
-                        Qk[1] = 0;
-                    end
-                    if (Busy[2] == 1 && Qk[2] == BClabel) begin
-                        Vk[2] = BCdata;
-                        Qk[2] = 0;
-                    end
+            end
+            // watch CDB
+            if (BCEN == 1 ) begin 
+                if (Busy[0] == 1 && Qj[0] == BClabel) begin
+                    Vj[0] = BCdata;
+                    Qj[0] = 0;
+                end
+                if (Busy[1] == 1 && Qj[1] == BClabel) begin
+                    Vj[1] = BCdata;
+                    Qj[1] = 0;
+                end
+                if (Busy[2] == 1 && Qj[2] == BClabel) begin
+                    Vj[2] = BCdata;
+                    Qj[2] = 0;
+                end
+                if (Busy[0] == 1 && Qk[0] == BClabel) begin
+                    Vk[0] = BCdata;
+                    Qk[0] = 0;
+                end
+                if (Busy[1] == 1 && Qk[1] == BClabel) begin
+                    Vk[1] = BCdata;
+                    Qk[1] = 0;
+                end
+                if (Busy[2] == 1 && Qk[2] == BClabel) begin
+                    Vk[2] = BCdata;
+                    Qk[2] = 0;
                 end
             end
         end
