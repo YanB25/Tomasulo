@@ -46,7 +46,7 @@ module top(
         .clk(clk),
         .nRST(nRST),
         .newpc(newpc),
-        .pcWrite(pcWrite),
+        .pcWrite(labelEN),
         .pc(pc)
     );
     PCHelper pc_helper(
