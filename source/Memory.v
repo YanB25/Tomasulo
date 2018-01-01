@@ -2,7 +2,8 @@
 
 module Memory(
     input clk,
-    input WEN, input [31:0] dataIn1,// Qj
+    input WEN,
+    input [31:0] dataIn1,// Qj
     input [31:0] dataIn2,// A 
     input op,// for example, 1 is load, 0 is write
     input [31:0] writeData,

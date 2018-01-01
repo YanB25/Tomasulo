@@ -9,7 +9,8 @@ module CU(
     input [2:0]isFull,
     output isFullOut,
     output RegDst,
-    output vkSrc
+    output vkSrc,
+    output QueueOp
 );
     always@(*) begin
         case(op)
@@ -45,4 +46,5 @@ module CU(
     assign isFullOut = isFull[ALUSel];
     assign RegDst = op == `opRFormat ? `FromRd : `FromRt;
     assign vkSrc = op == `opRFormat ? `FromRtData : `FromImmd;
+    assign QueueOp = op == `opLW ? `opLoad : `opStore;
 endmodule    
