@@ -8,7 +8,7 @@ module top_tb;
         nRST = 0;
         #2;
         nRST = 1;
-        #60;
+        #200;
         $finish;
     end
     always begin
