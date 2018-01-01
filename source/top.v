@@ -327,6 +327,8 @@ module top(
     // test memory
     assign require_s[2] = 0;
 
+    wire memory_available;
+    wire QueueOp;
 
     wire RTOpOut;
     wire [31:0]RTDataOut;
@@ -344,7 +346,7 @@ module top(
         .labelIn(rtLabel),
         .opIN(QueueOp),
         .BCEN(BCEN),
-        .BClabel(BElabel),
+        .BClabel(BClabel),
         .BCdata(BCdata),
         .opOut(RTOpOut),
         .dataOut(RTDataOut),
@@ -360,7 +362,7 @@ module top(
         .WEN(ResStationEN[3]),
         .isFull(),
         .require(),
-        .dataIn(exd_immd16), // TODO not generated
+        .dataIn({{16{immd16[15]}},immd16}), // TODO: not generated
         .labelIn(0),
         .opIN(QueueOp),
         .BCEN(BCEN),
@@ -391,7 +393,6 @@ module top(
         .labelOut(RSLabelOut)
     );
     wire [31:0]memory_loadData;
-    wire memory_available;
     wire memory_require_CDB;
     wire [3:0]memory_labelOut;
     Memory yf_memory(
@@ -400,7 +401,7 @@ module top(
         .dataIn1(RTDataOut),
         .dataIn2(ImmdDataOut),
         .op(RTOpOut),
-        .wrireData(RSDataOut),
+        .writeData(RSDataOut),
         .loadData(memory_loadData),
         .available(memory_available),
         .require(require_s[3]),
@@ -434,7 +435,6 @@ module top(
         .EN(BCEN)
     );
 
-    wire QueueOp;
     CU contril_unit(
         .op,
         .func,
@@ -445,7 +445,7 @@ module top(
         .isFullOut(isFullOut),
         .vkSrc,
         .RegDst,
-        .QueueOp,
+        .QueueOp(QueueOp)
     );
 
     assign labelEN = ~isFullOut;
