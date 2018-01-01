@@ -22,6 +22,7 @@ module Memory(
         States = 0;
         nRD = 1;
         nWR = 1;
+        require = 0;
     end 
     wire readStatus;
     wire writeStatus;

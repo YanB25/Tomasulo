@@ -38,10 +38,11 @@ module Queue(
     assign dataOut = Data[0];
     assign labelOut =IdLabel[0];
 
+    wire issuable = require && requireAC;
     wire wbusy = Busy[0] && Busy[1] && Busy[2];
     assign isFull = !issuable && wbusy;
     assign require = Busy[0] && Label[0] == 0;
-    wire issuable = require && requireAC;
+
     
     reg [1:0] first_empty;
     always@(*) begin
