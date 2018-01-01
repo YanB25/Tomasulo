@@ -380,7 +380,7 @@ module top(
         .WEN(ResStationEN[3]),
         .isFull(),
         .require(),
-        .dataIn(rsData), // TODO not generated
+        .dataIn(rsData),
         .labelIn(rsLabel),
         .opIN(QueueOp),
         .BCEN(BCEN),
@@ -395,7 +395,7 @@ module top(
     wire memory_require_CDB;
     wire [3:0]memory_labelOut;
     Memory yf_memory(
-        .clk,
+        .clk(clk),
         .WEN(queue_require),
         .dataIn1(RTDataOut),
         .dataIn2(ImmdDataOut),
