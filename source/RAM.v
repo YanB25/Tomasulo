@@ -20,39 +20,34 @@ module RAM(
     reg [7:0] ram [0:60]; //存储器
     // 设置状态变量
     always@( negedge clk) begin
-        if (R == 0 && nRD == 0) begin
-            R <= 1;
-        end
-        else  begin
-            if (R == 0 && nRD == 1) begin
+        if (R == 0) begin
+            if (nRD == 0) begin
+                R <= 1;
+            end
+            else begin // nRD == 1
                 R <= 0;
             end
-            else begin
-                if (R == 10) begin
-                    R <= 0;
-                end
-                else begin
-                    if (R != 0)
-                        R <= R + 1;
-                end
+        end
+        else if (R == 10) begin
+            R <= 0;            
+        end
+        else begin
+            R <= R+1;
+        end
+
+        if (W == 0) begin
+            if (nWR == 0) begin
+                W <= 1;
             end
-        end
-        if (W == 0 && nWR == 0) begin
-            W <= 1;
-        end
-        else  begin
-            if (W == 0 && nWR == 1) begin
+            else begin // nWR == 1
                 W <= 0;
             end
-            else begin
-                if (W == 10) begin
-                    W <= 0;
-                end
-                else begin
-                    if (W != 0)
-                        W <= W + 1;
-                end
-            end
+        end
+        else if (W == 10) begin
+            W <= 0;            
+        end
+        else begin
+            W <= W+1;
         end
     end
     always@(*) begin

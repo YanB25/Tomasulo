@@ -24,11 +24,11 @@ module pmfState(
                         stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
                 `sPremitiveIns, `sMAdd : begin
                     if (requireAC) begin
-                        if (WEN) begin
-                            stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
-                        end else begin
+                        // if (WEN) begin
+                            // stateOut <= op == `ALUSub ? `sInverse : `sPremitiveIns;
+                        // end else begin
                             stateOut <= `sIdle;
-                        end
+                        // end
                     end
                 end
                 `sInverse:
