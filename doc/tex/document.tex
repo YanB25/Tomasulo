@@ -4,6 +4,7 @@
 \documentclass[twoside]{article}
 \usepackage{url}
 \usepackage{minted}
+
 \newminted{verilog}{mathescape,
                linenos,
                numbersep=5pt,
@@ -12,6 +13,7 @@
                framesep=2mm,
                breaklines=true}
 \usepackage{lipsum} % Package to generate dummy text throughout this template
+\usepackage[table,svgnames]{xcolor}
 \usepackage{ctex}
 \usepackage[sc]{mathpazo} % Use the Palatino font
 \usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
@@ -22,9 +24,9 @@
 \usepackage{booktabs} % Horizontal rules in tables
 \usepackage{float} % Required for tables and figures in the multi-column environment - they need to be placed in specific locations with the [H] (e.g. \begin{table}[H])
 \usepackage[colorlinks,
-			linkcolor=red,
+			linkcolor=blue,
 			anchorcolor=blue,            
-			citecolor=green            
+			citecolor=blue            
 			]{hyperref}
 \usepackage{lettrine} % The lettrine is the first enlarged letter at the beginning of the text
 \usepackage{paralist} % Used for the compactitem environment which makes bullet points with less space between them
@@ -91,7 +93,7 @@
 \begin{abstract}
 	本文主要描述了一种基于Tomasolu算法的支持乱序执行的CPU的实现。网络上很少关于该算法的verilog实现，本文创新性地根据该算法的理论，从模块设计，时序设计等不同角度，独立进行分析、设计该算法硬件层面的实现。在最后，本文还对该算法的优点及不足及可能的提高方法做出了进一步的阐述，并为之后该CPU效率的提高从分支预测，前瞻执行等方面做出了适当的预测和展望。
 
-	\textbf{关键词： }\textbf{乱序执行} \textbf{动态调度} \textbf{verilog} \textbf{CPU运行时间}
+	\textbf{关键词： }\textbf{乱序执行} \textbf{动态调度} \textbf{$\ $verilog} \textbf{ $\ $  CPU运行时间}
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -134,7 +136,7 @@
 \subsection{数据通路图设计}
 \begin{figure}[htp]
     \centering
-    \includegraphics[width=13cm]{"./figure/dataPathDiagram.png"}       
+    \includegraphics[width=13cm]{"./figure/dataPathDiagram.png"}   
     \caption{乱序执行流水线CPU的数据通路示意图}
     \label{fig:dataPathDiagram}
 \end{figure}
@@ -143,36 +145,55 @@
 在实现该数据通路的过程中，以下3个关键模块的实现为Tomasulo算法的良好运行打下了良好的基础。
 \paragraph{保留站}
 
-% TODO: 保留站端口设计图
-\begin{figure}[htp]
-    \centering
-%	\includegraphics[width=13cm]{"./figure/"}
-    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
-    \caption{保留站端口设计}
-    \label{fig:reservationStation}
-\end{figure}
+\begin{table}[htbp]
+\centering
+\caption{保留站端口说明表}
+\label{tab:reservationStation}
+\rowcolors{1}{White}{Lavender}
+\begin{tabular}{llll}
+\hline
+端口类型 & 位宽 & 端口名称 & 端口说明 \\
+input & 1 & clk & 时钟信号 \\
+input & 1 & nRST & 清零信号 \\
+input & 1 & EXEable & 该保留站对应的ALU是否可执行 \\
+input & 1 & WEN & 该保留站是否可写 \\
+input & [1:0] & ResStationDst & 该保留站的编号 \\
+input & [1:0] & opCode & 指令对应操作码 \\
+input & [31:0] & dataIn1 & 数据输入端口 \\
+input & [3:0] & label1 & 暴露站好输入端口 \\
+input & [31:0] & dataIn2 & 数据输入端口 \\
+input & [3:0] & label2 & 保留站号输入端口 \\
+input & 1 & BCEN & 广播是否可用 \\
+input & [3:0] & BClabel & 广播数据对应的保留站号 \\
+input & [31:0] & BCdata & 广播的数据 \\
+output & [1:0] & opOut & 给ALU输出对应的操作码 \\
+output & [31:0] & dataOut1 & 给ALU输出对应的数据 \\
+output & [31:0] & dataOut2 & 给ALU输出对应的数据 \\
+output & 1 & isFull & 保留站是否满 \\
+output & 1 & OutEn & 该保留站输出是否有效 \\
+output & [3:0] & ready\_labelOut & 保留站就绪指令的保留站号 \\
+output & [3:0] & writeable\_labelOut & 可写的保留站号 \\
+\hline
+\hiderowcolors
+\end{tabular}
+\end{table}
 
-\subparagraph{保留站设计}
 \begin{itemize}
-    \item 关于保留站的端口设计，可见\autoref{fig:reservationStation}
+    \item 关于保留站的端口设计，可见\autoref{tab:reservationStation}
     \item 当时钟上升沿到达的时候 \\
-        1. 由信号isFull反映是否可写及写成功，将对应的值写进保留站中
-        （不提供控制写地址的端口，只向外界告知是否写成功）
-        2. 从CDB中读取信息，若CDB可用，则上升沿写入对应保留站中的寄存器，并修改相应Qi/Qj
+        由信号isFull反映是否可写及写成功，将对应的值写进保留站中
+        （不提供控制写地址的端口，只向外界告知是否写成功）并从CDB中读取信息，若CDB可用，则上升沿写入对应保留站中的寄存器，并修改相应Qi/Qj。
     \item 时钟下降沿到达时，若保留站中存在操作数就绪的指令，则对外输出就绪指令数据及保留站号 \\
-        1. 输入信号EXEable若反映ALU不可用， 则对应Busy位不修改，否则将已输出的指令对应的Busy清零
-        2. 输出信号OutEn为0反映输出不可用（指令处于未就绪状态），反之则就绪，ALU可写 
+        输入信号EXEable若反映ALU不可用， 则对应Busy位不修改，否则将已输出的指令对应的Busy清零。若输出信号OutEn为0反映输出不可用（指令处于未就绪状态），反之则就绪，ALU可写。
 \end{itemize}   
 
 
 \paragraph{公共数据总线CDB}
 
-% TODO:公共数据总线端口设计图
 \begin{figure}[htp]
     \centering
-%	\includegraphics[width=13cm]{"./figure/"}
-    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
-    \caption{公共数据总线端口设计图}
+    \includegraphics[width=13cm]{"./figure/CDB.png"}
+    \caption{公共数据总线端口图}
     \label{fig:CDB}
 \end{figure}
 
@@ -181,14 +202,35 @@ CDB中，我们实现了一个优先译码器。当各个器件向CDB发送传�
 
 \paragraph{寄存器文件}
 
-% & TODO:寄存器文件端口设计图
-\begin{figure}[htp]
+\begin{table}[htbp]
     \centering
-%	\includegraphics[width=13cm]{"./figure/"}
-    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
-    \caption{寄存器文件端口示意图}
-    \label{fig:refFile}
-\end{figure}
+    \caption{寄存器端口说明表}
+    \label{tab:regfile}
+    \rowcolors{1}{White}{Lavender}
+    \begin{tabular}{llll}
+    \hline
+    端口类型 & 位宽 & 端口名称 & 端口说明 \\
+    input & 1 & clk & 时钟信号 \\
+    input & 1 & nRST & 清零信号 \\
+    input & [4:0] & ReadAddr1 & 读取的寄存器号 \\
+    input & [4:0] & ReadAddr2 & 读取的寄存器号\\
+    input & 1 & RegWr & 寄存器是否可写 \\
+    input & [4:0] & WriteAddr & 写寄存器号 \\
+    input & [3:0] & WriteLabel & 写寄存器对应的保留站号 \\
+    output & [31:0] & DataOut1 & 读取寄存器对应的数据 \\
+    output & [31:0] & DataOut2 & 读取寄存器对应的数据 \\
+    output & [3:0] & LabelOut1 & 读取寄存器对应的保留站号 \\
+    output & [3:0] & LabelOut2 & 读取寄存器对应的保留站号 \\
+    input & 1 & BCEN & 广播的数据是否可用 \\
+    input & [3:0] & BClabel & 广播的数据对应的保留站号 \\
+    input & [31:0] & BCdata & 广播的数据 \\
+    input & 1 & BCEN & 广播是否可用 \\
+    input & [3:0] & BClabel & 广播数据对应的保留站号 \\
+    input & [31:0] & BCdata & 广播的数据 \\
+    \hline
+    \hiderowcolors
+    \end{tabular}
+    \end{table}
 
 \subparagraph{寄存器文件设计}
 为了能够监视CDB数据总线上的数据，寄存器文件里的每一个寄存器都与CDB直接相连，并在每个时钟上升沿时根据数据总线的信号决定是否更新该寄存器。
@@ -197,11 +239,9 @@ CDB中，我们实现了一个优先译码器。当各个器件向CDB发送传�
 \subsection{算法原理}
 \label{algo:tomasulo}
 
-% TODO:算法流程图
 \begin{figure}[htp]
     \centering
-%	\includegraphics[width=13cm]{"./figure/"}
-    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
+	\includegraphics[width=13cm]{"./figure/flawDiagram.png"}
     \caption{指令运行流程：更新PC-指令发射-执行-广播写回}
     \label{fig:flowDiagram}
 \end{figure}
@@ -218,7 +258,7 @@ CDB中，我们实现了一个优先译码器。当各个器件向CDB发送传�
 
 ALU在完成计算并且结果已写入寄存器文件和操作数中后，就会将写成功信号返回给保留站，保留站将该条指令的Busy为置为0，清除该条指令。
 
-\paragraph{广播数据}
+\paragraph{广播写回}
 ALU执行后，将数据发送到公共数据总线上，当公共数据总线返回成功写入信号后，ALU返回空闲状态等待下一次执行，各保留站和寄存器根据公共数据总线的信息决定是否更新自身数值。
 （此过程，保留站中一些需要等待操作数写入指令的就会进入就绪状态）
 
@@ -240,7 +280,15 @@ ALU执行后，将数据发送到公共数据总线上，当公共数据总线�
 \end{verilogcode}
 
 \paragraph{仿真波形图}
-% TODO:回宿舍截一下仿真波形图就好
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=15cm]{"./figure/simulationiDiagram.png"}
+    \caption{仿真波形图}
+    \label{fig:simulationiDiagram}
+\end{figure}
+
+
 经过检查各时钟周期各模块的控制信号，以及最后寄存器的结果，验证了该CPU在此样例的正确性。
 
 其他测试样例由于空间限制，就不在此一一放出了。
@@ -250,7 +298,7 @@ ALU执行后，将数据发送到公共数据总线上，当公共数据总线�
 \section{项目亮点}
 传统Tomasulo教材资料只给出了算法的软件模拟实现或伪代码实现。具体的硬件实现会遇到许多瓶颈。本项目对其中的一些难点做了突破，体现了一些创新性。
 \subsection{体系结构特点}
-\textbf{该CPU整体体系结构特点为：框架流水线，局部并行化，部件多周期。}  
+\textbf{该CPU整体体系结构特点为：框架流水线，局部并行化，部件多周期。} 
 \begin{description}
 	\item[流水线] 总框架大致可以分\textbf{指令发射},\textbf{执行},\textbf{广播}等三个阶段。各个阶段流水执行。即每个时钟周期（几乎）保证有一条指令被执行,一份数据被广播。
 	\item[并行化] 多个ALU并行地执行数据。一旦指令的操作数准备完毕，即可从保留站发射到ALU处。各个ALU的运算独立进行，互不干涉。
@@ -261,12 +309,16 @@ ALU执行后，将数据发送到公共数据总线上，当公共数据总线�
 在ALU的设计中，乘法器的设计利用阵列乘法器加速定点数乘法。  
 采用$32 + 16 +... +1=63$个简易的加法电路，按5层的方式排布成阵列，并行地计算乘法。将乘法的运行时间缩短至5个CPU时钟。
 
-% TODO:乘法器示意图
-\begin{figure}[!hbp]
-\makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
-\caption{此处应有一个乘法器的示意图}
-\label{fig:temp1}
+
+
+\begin{figure}[htp]
+    \centering
+    \includegraphics[width=12cm]{"./figure/mulALU.jpg"}
+    \caption{阵列乘法器示意图}
+    \label{fig:mulALU}
 \end{figure}
+
+
 
 \subsection{Queue in Hardware}
 利用硬件实现队列。注意到并解决了所有的所有的难点。包括 
@@ -290,9 +342,9 @@ ALU执行后，将数据发送到公共数据总线上，当公共数据总线�
 
 \subsection{Good Coding Style}
 本项目有着良好的代码风格，以确保代码的可读性和可维护性，以备之后项目的进一步发展。
-\begin{description}
-	\item[采用宏定义增强可读性]将所有常量写入头文件中，便于管理。所有常数都用宏定义代替，增强可读性。
-	\item[generate 语法]当大量产生相同器件，或进行相同的连线时，采用~verilog 2001~标准中加入的~generate~语法,以达到效率、准确地描述硬件的效果。
+\begin{enumerate}
+	\item \textbf{采用宏定义增强可读性  }将所有常量写入头文件中，便于管理。所有常数都用宏定义代替，增强可读性。
+	\item \textbf{generate 语法  }当大量产生相同器件，或进行相同的连线时，采用~verilog 2001~标准中加入的~generate~语法,以达到效率、准确地描述硬件的效果。
     \begin{verilogcode}
         generate
             genvar i
@@ -301,34 +353,18 @@ ALU执行后，将数据发送到公共数据总线上，当公共数据总线�
             end
         endgenerate
     \end{verilogcode}
-\end{description}
+\end{enumerate}
 
 %------------------------------------------------
 \section{效果评价}
 
-\subsection{实现效果}
-我们通过运行一段指定的汇编指令，比较单周期CPU运行时间，多周期CPU运行时间，还有我们实现的乱序执行流水线的CPU运行时间(该时间由vivado仿真得出)。数据可见\autoref{tab:timediff}。由此可见，使用了~Tomasolu~算法实现乱序执行的CPU，在CPU运行效率上有了较大的提高。\\
-\paragraph{测试代码}
-\begin{verilogcode}
-//放测试代码
-\end{verilogcode}
-% TODO: 补充运行时间对比图
-\paragraph{运行结果}
-\begin{table}[htp]
-    \caption{不同CPU运行时间的对比}
-    \centering
-    \begin{tabular}{cccc}
-        \toprule
-        CPU种类 & 单周期CPU & 多周期CPU & 乱序执行流水线CPU \\ 
-        时钟周期 & XXX & XXX & XXX \\
-        完成一条指令所需周期数 & XXX & XXX & XXX \\
-        完成一条指令所需时间 & XXX & XXX & XXX \\
-        \midrule
-        同一段代码的运行时间 & XXX & XXX & XXX \\
-        \bottomrule
-    \end{tabular}
-    \label{tab:timediff}    
-\end{table}
+\subsection{实现价值}
+在现在tomasolu算法资料相当匮乏的情况下，我们仅凭书本还有维基百科上的介绍，先是证明了算法的正确性，然后进行硬件的模块设计，时序设计。
+
+其中硬件的整体架构，参考了书本的结构图，而硬件的接口设计以及时序设计,网上找不到成熟的教程，都是我们从零开始，一步一步摸索实现出来的。
+在这个过程中，我们也踩了很多坑，也认识到硬件设计中时序设计的困难。
+
+我们完成的这一个项目，并不是这个CPU设计的结束，而是乱序执行流水线CPU（一个更符合现代处理器架构的CPU）实现的起点，我们需要进一步完善模块的接口设计，我们也还有很多工作需要做（todo list）, 我希望，这一个有着详尽文档的设计项目，能够给之后的同学启发，在此基础上，实现分支预测，实现前瞻执行等特性。
 
 \subsection{不足及反思}
 我们对于该算法的实现中，由于时间的限制，并不能将CPU的性能做到最佳，以下是我们发现了该CPU可能存在的一些不足，并思考了相应的解决方案。
@@ -339,13 +375,6 @@ ALU执行后，将数据发送到公共数据总线上，当公共数据总线�
 \end{itemize}
 
 
-\section{项目前景}
-在现在tomasolu算法资料相当匮乏的情况下，我们仅凭书本还有维基百科上的介绍，先是证明了算法的正确性，然后进行硬件的模块设计，时序设计。
-
-其中硬件的整体架构，参考了书本的结构图，而硬件的接口设计以及时序设计,网上找不到成熟的教程，都是我们从零开始，一步一步摸索实现出来的。
-在这个过程中，我们也踩了很多坑，也认识到硬件设计中时序设计的困难。
-
-我们完成的这一个项目，并不是这个CPU设计的结束，而是乱序执行流水线CPU（一个更符合现代处理器架构的CPU）实现的起点，我们需要进一步完善模块的接口设计，我们也还有很多工作需要做（todo list）, 我希望，这一个有着详尽文档的设计项目，能够给之后的同学启发，在此基础上，实现分支预测，实现前瞻执行等特性。
 
 \section{鸣谢}
 这个项目的完成，需要感谢李国桢老师对我们的大力支持与鼓励，您给了我们很多的学习资料，我们在这些学习资料里收获到了很多实现这个项目必备的知识。
