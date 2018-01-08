@@ -1,0 +1,45 @@
+{
+    "latex-workshop.chktex.enabled": true,
+    "todohighlight.isEnable": true,
+    "latex-workshop.latex.toolchain": [
+        {
+          "command": "xelatex",
+          "args": [
+            "-synctex=1",
+            "-shell-escape",
+            "%DOC%"
+          ]
+        }, {
+          "command": "bibtex",
+          "args": [
+            "%DOCFILE%"
+          ]
+        }, {
+          "command": "xelatex",
+          "args": [
+            "-synctex=1",
+            "-shell-escape",
+            "%DOC%"
+          ]
+        }, {
+          "command": "xelatex",
+          "args": [
+            "-synctex=1",
+            "-shell-escape",
+            "%DOC%"
+          ]
+        }
+      ],
+      "todohighlight.include": [
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.html",
+        "**/*.php",
+        "**/*.css",
+        "**/*.scss",
+        "**/*.tex",
+        "**/*.cpp"
+      ]
+}
