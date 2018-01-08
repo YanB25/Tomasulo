@@ -45,6 +45,24 @@
 \fancyhead[C]{计算机组成与设计$\bullet$ 1月 2018 $\bullet$ 课程设计 } % Custom header text
 \fancyfoot[RO,LE]{\thepage} % Custom footer text
 
+
+\def\equationautorefname{式}%
+\def\footnoteautorefname{脚注}%
+\def\itemautorefname{项}%
+\def\figureautorefname{图}%
+\def\tableautorefname{表}%
+\def\partautorefname{篇}%
+\def\appendixautorefname{附录}%
+\def\chapterautorefname{章}%
+\def\sectionautorefname{节}%
+\def\subsectionautorefname{小小节}%
+\def\subsubsectionautorefname{subsubsection}%
+\def\paragraphautorefname{段落}%
+\def\subparagraphautorefname{子段落}%
+\def\FancyVerbLineautorefname{行}%
+\def\theoremautorefname{定理}%
+
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
@@ -73,7 +91,7 @@
 \begin{abstract}
 	本文主要描述了一种基于Tomasolu算法的支持乱序执行的CPU的实现。网络上很少关于该算法的verilog实现，本文创新性地根据该算法的理论，从模块设计，时序设计等不同角度，独立进行分析、设计该算法硬件层面的实现。在最后，本文还对该算法的优点及不足及可能的提高方法做出了进一步的阐述，并为之后该CPU效率的提高从分支预测，前瞻执行等方面做出了适当的预测和展望。
 
-	\textbf{关键词： }\textbf{乱序执行} \textbf{动态调度}
+	\textbf{关键词： }\textbf{乱序执行} \textbf{动态调度} \textbf{verilog} \textbf{CPU运行时间}
 \end{abstract}
 
 %----------------------------------------------------------------------------------------
@@ -113,31 +131,119 @@
 %------------------------------------------------
 \section{技术路线}
 
-% TODO: 均是需要补充的内容
-
-\subsection{数据通路图及算法原理}
+\subsection{数据通路图设计}
 \begin{figure}[htp]
     \centering
     \includegraphics[width=13cm]{"./figure/dataPathDiagram.png"}       
-    \caption{该CPU的数据通路示意图}
+    \caption{乱序执行流水线CPU的数据通路示意图}
     \label{fig:dataPathDiagram}
 \end{figure}
 
-在数据通路图上，该算法如此实现（展示数据通路）
-  1. 每一条指令的运行过程：更新PC-指令发射-执行-广播写回
-  1. 指令流入保留站，并更新寄存器的状态表
-      1. 已就绪的操作数，直接从寄存器读进来，从而与寄存器文件解耦合
-      2. 对于操作数未就绪的指令，在保留站中等待数据写入
-  2. 由保留站确定并发射当前操作数**就绪**的指令给ALU执行
-  3. ALU执行后，将数据发送到公共数据总线上，各保留站和寄存器根据公共数据总线的信息决定是否更新自身数值
-  （此过程，保留站中一些需要等待操作数写入指令的就会进入就绪状态）
+\subsection{关键模块设计}
+在实现该数据通路的过程中，以下3个关键模块的实现为Tomasulo算法的良好运行打下了良好的基础。
+\paragraph{保留站}
 
-1. 数据通路图设计,算法原理介绍\label{algo:tomasulo}
-2. 关键模块设计（放模块端口图及部分代码）
-3. CPU支持指令集的简要介绍
-4. 测试样例及仿真效果（放上仿真波形图）
+% TODO: 保留站端口设计图
+\begin{figure}[htp]
+    \centering
+%	\includegraphics[width=13cm]{"./figure/"}
+    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
+    \caption{保留站端口设计}
+    \label{fig:reservationStation}
+\end{figure}
+
+\subparagraph{保留站设计}
+\begin{itemize}
+    \item 关于保留站的端口设计，可见\autoref{fig:reservationStation}
+    \item 当时钟上升沿到达的时候 \\
+        1. 由信号isFull反映是否可写及写成功，将对应的值写进保留站中
+        （不提供控制写地址的端口，只向外界告知是否写成功）
+        2. 从CDB中读取信息，若CDB可用，则上升沿写入对应保留站中的寄存器，并修改相应Qi/Qj
+    \item 时钟下降沿到达时，若保留站中存在操作数就绪的指令，则对外输出就绪指令数据及保留站号 \\
+        1. 输入信号EXEable若反映ALU不可用， 则对应Busy位不修改，否则将已输出的指令对应的Busy清零
+        2. 输出信号OutEn为0反映输出不可用（指令处于未就绪状态），反之则就绪，ALU可写 
+\end{itemize}   
 
 
+\paragraph{公共数据总线CDB}
+
+% TODO:公共数据总线端口设计图
+\begin{figure}[htp]
+    \centering
+%	\includegraphics[width=13cm]{"./figure/"}
+    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
+    \caption{公共数据总线端口设计图}
+    \label{fig:CDB}
+\end{figure}
+
+\subparagraph{CDB设计}
+CDB中，我们实现了一个优先译码器。当各个器件向CDB发送传播请求时（传送1），只有一个器件能得到接受回应（1），其余器件都得到拒绝回应（0）。通过这种做法，解决CDB总线繁忙的情况，每个时钟周期确保只有一个数据被广播出去。  
+
+\paragraph{寄存器文件}
+
+% & TODO:寄存器文件端口设计图
+\begin{figure}[htp]
+    \centering
+%	\includegraphics[width=13cm]{"./figure/"}
+    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
+    \caption{寄存器文件端口示意图}
+    \label{fig:refFile}
+\end{figure}
+
+\subparagraph{寄存器文件设计}
+为了能够监视CDB数据总线上的数据，寄存器文件里的每一个寄存器都与CDB直接相连，并在每个时钟上升沿时根据数据总线的信号决定是否更新该寄存器。
+
+
+\subsection{算法原理}
+\label{algo:tomasulo}
+
+% TODO:算法流程图
+\begin{figure}[htp]
+    \centering
+%	\includegraphics[width=13cm]{"./figure/"}
+    \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
+    \caption{指令运行流程：更新PC-指令发射-执行-广播写回}
+    \label{fig:flowDiagram}
+\end{figure}
+
+结合该数据通路图，该算法的实施流程见\autoref{fig:flowDiagram}
+\paragraph{更新PC}
+在时钟上升沿时，若当前指令所对应的保留站未满，则更新PC，以备下一条指令写入保留站。
+
+\paragraph{指令流入}
+在时钟上升沿，若当前指令对应的保留站未满，则当前指令写入保留站中，并将寄存器的状态表更新为当前写入的保留站号。当前指令中已就绪的操作数，直接从寄存器读进来，从而与寄存器文件解耦合。对于操作数未就绪的指令，在保留站中存好该数据的的最新来源（保留站号，从寄存器状态表读取），等待数据写入。
+
+\paragraph{执行阶段}
+保留站能够根据保留站中的所有指令的情况，通过组合逻辑电路判断当前是否有指令所有操作数都就绪，一旦就绪，在时钟上升沿时这条指令就会写到ALU中。
+
+ALU在完成计算并且结果已写入寄存器文件和操作数中后，就会将写成功信号返回给保留站，保留站将该条指令的Busy为置为0，清除该条指令。
+
+\paragraph{广播数据}
+ALU执行后，将数据发送到公共数据总线上，当公共数据总线返回成功写入信号后，ALU返回空闲状态等待下一次执行，各保留站和寄存器根据公共数据总线的信息决定是否更新自身数值。
+（此过程，保留站中一些需要等待操作数写入指令的就会进入就绪状态）
+
+
+% \subsection{CPU实现指令集}
+% 3. CPU支持指令集的简要介绍
+
+
+\subsection{仿真及测试}
+
+\paragraph{测试样例1}
+
+\begin{verilogcode}
+    001000 00000 00010 0000000000000101 //addi r2, r0, 5 // r2 <- 5
+    001000 00001 00011 0000000000001000 //addi r3, r1, 8 // r3 <- 8
+    101011 00011 00010 0000000000000100 //sw r2, r3(4)
+    100011 00011 00111 0000000000000100 //lw r7, r3(4)
+    11111111 00000000 00000000 00000000 //halt
+\end{verilogcode}
+
+\paragraph{仿真波形图}
+% TODO:回宿舍截一下仿真波形图就好
+经过检查各时钟周期各模块的控制信号，以及最后寄存器的结果，验证了该CPU在此样例的正确性。
+
+其他测试样例由于空间限制，就不在此一一放出了。
 
 %------------------------------------------------
 
@@ -155,7 +261,7 @@
 在ALU的设计中，乘法器的设计利用阵列乘法器加速定点数乘法。  
 采用$32 + 16 +... +1=63$个简易的加法电路，按5层的方式排布成阵列，并行地计算乘法。将乘法的运行时间缩短至5个CPU时钟。
 
-
+% TODO:乘法器示意图
 \begin{figure}[!hbp]
 \makebox[\textwidth]{\framebox[5cm]{\rule{0pt}{5cm}}}
 \caption{此处应有一个乘法器的示意图}
@@ -199,27 +305,31 @@
 
 %------------------------------------------------
 \section{效果评价}
-% TODO: 这一块也是需要补充的 
+
 \subsection{实现效果}
-我们通过运行一段指定的汇编指令，比较单周期CPU运行时间，多周期CPU运行时间，还有我们实现的乱序执行流水线CPU运行时间(该时间由vivado仿真得出)\\
-\textbf{测试代码}
+我们通过运行一段指定的汇编指令，比较单周期CPU运行时间，多周期CPU运行时间，还有我们实现的乱序执行流水线的CPU运行时间(该时间由vivado仿真得出)。数据可见\autoref{tab:timediff}。由此可见，使用了~Tomasolu~算法实现乱序执行的CPU，在CPU运行效率上有了较大的提高。\\
+\paragraph{测试代码}
 \begin{verilogcode}
 //放测试代码
 \end{verilogcode}
-\textbf{运行结果}
+% TODO: 补充运行时间对比图
+\paragraph{运行结果}
 \begin{table}[htp]
     \caption{不同CPU运行时间的对比}
     \centering
     \begin{tabular}{cccc}
         \toprule
         CPU种类 & 单周期CPU & 多周期CPU & 乱序执行流水线CPU \\ 
+        时钟周期 & XXX & XXX & XXX \\
+        完成一条指令所需周期数 & XXX & XXX & XXX \\
+        完成一条指令所需时间 & XXX & XXX & XXX \\
         \midrule
         同一段代码的运行时间 & XXX & XXX & XXX \\
         \bottomrule
     \end{tabular}
     \label{tab:timediff}    
 \end{table}
-由此可见，使用了~Tomasolu~算法实现乱序执行的CPU，在CPU运行效率上有了较大的提高。
+
 \subsection{不足及反思}
 我们对于该算法的实现中，由于时间的限制，并不能将CPU的性能做到最佳，以下是我们发现了该CPU可能存在的一些不足，并思考了相应的解决方案。
 \begin{itemize}
@@ -242,7 +352,9 @@
 
 感谢何朝东老师在“计算机组成与设计实验课”课程中的教学，何老师在课堂上讲解了很多与verilog语言有关的知识，同时还详细的说明了vivado软件的用法，让我们受益匪浅。
 
-同时，还需要感谢张晨曦老师及其所著的《计算机体系结构》，该本教材知识点覆盖面广，同时知识的讲解透彻，其配套的教学软件更是加深了我们对该算法的理解，这是我们的项目能够成功的前提。
+同时，还需要感谢张晨曦老师及其所著的《计算机体系结构》，该本教材知识点覆盖面广，同时知识讲解透彻，其配套的教学软件更是加深了我们对该算法的理解，这是我们的项目能够成功的前提。
+
+再次感谢给我们支持与鼓励的大家！
 
 
 %----------------------------------------------------------------------------------------
